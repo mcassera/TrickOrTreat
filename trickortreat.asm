@@ -246,6 +246,16 @@ setMoon:
 		lda #$55							;setting a dude
 		sta $d9a6
 
+;reset SID
+		ldx #$00
+sidLooop:
+		lda #$00
+		sta $d400,x 
+		sta $d500,x 
+		inx
+		cpx #$18
+		bcc sidLooop
+		beq sidLooop
 
 ; ************************************************************************************************************************************
 GameStart:
@@ -1325,7 +1335,7 @@ background_map:
 .binary "tt2h.tlm"							; for hardware
 
 .include "player.s"
-.include "candy.s"
+.include "candy2.s"
 .include "moon.s"
 
 * = $20000
