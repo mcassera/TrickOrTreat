@@ -1,7 +1,7 @@
 
 ; 64tass Turbo Assembler Macro V1.59.3120 listing file
 ; 64tass -L TrickOrTreatCodeDump.txt --output-exec=start --intel-hex --output trickortreat.hex trickortreat.asm
-; Fri Nov 01 01:34:44 2024
+; Fri Nov 01 11:03:58 2024
 
 ;Offset	;PC	;Hex		;Monitor	;Source
 
@@ -891,7 +891,7 @@
 >200a		00						.byte $00							; terminating byte
 .200b						SC:
 .200b		64 01		stz $01				stz MMU_IO_CTRL						; should do this on every program
-.200d		20 a3 26	jsr $26a3			jsr clearTextScreen
+.200d		20 b4 26	jsr $26b4			jsr clearTextScreen
 .2010		a9 a0		lda #$a0			lda #<event
 .2012		85 f0		sta $f0				sta kernel.args.events
 .2014		a9 00		lda #$00			lda #>event
@@ -977,7 +977,7 @@
 .20d6		a2 00		ldx #$00			ldx #$00							; X is the number of colors to copy, check for 154
 .20d8		a0 22		ldy #$22			ldy #$22
 .20da						makeClut:
-.20da		8c fc 2a	sty $2afc			sty totalColors
+.20da		8c 0d 2b	sty $2b0d			sty totalColors
 .20dd						color_loop:
 .20dd		a0 00		ldy #$00			ldy #$00							; Y points to the color component (Blue Red Green Alpha)
 .20df						comp_loop:
@@ -987,7 +987,7 @@
 .20e4		c0 04		cpy #$04			cpy #$04							; Do 4 bytes for one color + Alpha
 .20e6		d0 f7		bne $20df			bne comp_loop
 .20e8		e8		inx				inx
-.20e9		ec fc 2a	cpx $2afc			cpx totalColors						; Loop for all colors of the CLUT
+.20e9		ec 0d 2b	cpx $2b0d			cpx totalColors						; Loop for all colors of the CLUT
 .20ec		f0 1d		beq $210b			beq done_lut
 .20ee		18		clc				clc									; Move the source pointer to the next Color
 .20ef		a5 80		lda $80				lda ptr_src
@@ -1039,1047 +1039,1056 @@
 .2144		8d a3 da	sta $daa3			sta $daa3
 .2147		a9 60		lda #$60			lda #$60
 .2149		8d a4 da	sta $daa4			sta $daa4
-.214c		8d f5 2a	sta $2af5			sta moonXLO
+.214c		8d 06 2b	sta $2b06			sta moonXLO
 .214f		a9 01		lda #$01			lda #$01
 .2151		8d a5 da	sta $daa5			sta $daa5
-.2154		8d f6 2a	sta $2af6			sta moonXHI
+.2154		8d 07 2b	sta $2b07			sta moonXHI
 .2157		a9 32		lda #$32			lda #$32
 .2159		8d a6 da	sta $daa6			sta $daa6
-.215c		8d f7 2a	sta $2af7			sta moonYLO
+.215c		8d 08 2b	sta $2b08			sta moonYLO
 .215f		9c a7 da	stz $daa7			stz $daa7
-.2162		9c f8 2a	stz $2af8			stz moonYHI
+.2162		9c 09 2b	stz $2b09			stz moonYHI
 .2165		a9 55		lda #$55			lda #$55							;setting a dude
 .2167		8d a6 d9	sta $d9a6			sta $d9a6
-.216a						GameStart:
-.216a		a9 00		lda #$00			lda #kernel.args.timer.FRAMES		; set the Timer to Frames
-.216c		09 80		ora #$80			ora #kernel.args.timer.QUERY		; and query what frame we're on
-.216e		85 f3		sta $f3				sta kernel.args.timer.units			; store in units parameter
-.2170		20 f0 ff	jsr $fff0			jsr kernel.Clock.SetTimer			; jsr to Kernel Routine
-.2173		b0 04		bcs $2179			bcs skipSet							; If Carry set, ignore
-.2175		69 01		adc #$01			adc #$01							; if not add 1 to Accumulator for next frame
-.2177		85 d0		sta $d0				sta $d0
-.2179						skipSet:
-.2179		20 93 26	jsr $2693			jsr SetTimer						; Let's get the kernel set up for the timer
-.217c		a2 00		ldx #$00			ldx #$00
-.217e						mAdd:
-.217e		bd 58 15	lda $1558,x			lda musicTable,x
-.2181		95 70		sta $70,x			sta $70,x
-.2183		e8		inx				inx
-.2184		e0 09		cpx #$09			cpx #$09
-.2186		d0 f6		bne $217e			bne mAdd
-.2188						systemStart:
-.2188		9c 00 d2	stz $d200			stz $d200
-.218b		a9 01		lda #$01			lda #$01
-.218d		8d a6 d6	sta $d6a6			sta Random_Reg
-.2190		a9 0f		lda #$0f			lda #$0f							; set the SID volume to 15
-.2192		8d 18 d4	sta $d418			sta SID_L_VOL
-.2195		8d 18 d5	sta $d518			sta SID_R_VOL
-.2198		a9 37		lda #$37			lda #$37
-.219a		8d 05 d4	sta $d405			sta SID_L1_ATDL
-.219d		8d 05 d5	sta $d505			sta SID_R1_ATDL
-.21a0		8d 0c d4	sta $d40c			sta SID_L2_ATDL
-.21a3		8d 0c d5	sta $d50c			sta SID_R2_ATDL
-.21a6		a9 52		lda #$52			lda #$52
-.21a8		8d 06 d5	sta $d506			sta SID_R1_STRL
-.21ab		8d 06 d4	sta $d406			sta SID_L1_STRL
-.21ae		8d 0d d5	sta $d50d			sta SID_R2_STRL
-.21b1		8d 0d d4	sta $d40d			sta SID_L2_STRL
-.21b4						setPlayer:
-.21b4		a9 11		lda #$11			lda #$11							;player
-.21b6		8d a0 d9	sta $d9a0			sta $d9a0
-.21b9		a9 08		lda #$08			lda #<player2
-.21bb		8d a1 d9	sta $d9a1			sta $d9a1
-.21be		a9 63		lda #$63			lda #>player2
-.21c0		8d a2 d9	sta $d9a2			sta $d9a2
-.21c3		a9 01		lda #$01			lda #$01
-.21c5		8d a3 d9	sta $d9a3			sta $d9a3
-.21c8		a9 48		lda #$48			lda #$48
-.21ca		8d a4 d9	sta $d9a4			sta $d9a4
-.21cd		9c a5 d9	stz $d9a5			stz $d9a5
-.21d0		9c a7 d9	stz $d9a7			stz $d9a7
-.21d3						setCandy:
-.21d3		a2 00		ldx #$00			ldx #$00
-.21d5						cLoop:
-.21d5		a9 38		lda #$38			lda #$38
-.21d7		9d 4c 2a	sta $2a4c,x			sta candy_XLO,x						; X position of candy LO
-.21da		a9 00		lda #$00			lda #$00
-.21dc		9d 60 2a	sta $2a60,x			sta candy_XHI,x 					; X position of candy HI
-.21df		a9 15		lda #$15			lda #21
-.21e1		9d 38 2a	sta $2a38,x			sta candy_Flag,x					; current state (on steps)
-.21e4		bd 88 2a	lda $2a88,x			lda candy_Home,x					; home position of candy
-.21e7		9d 74 2a	sta $2a74,x			sta candy_YLO,x						; current y pos of candy
-.21ea		bd 9c 2a	lda $2a9c,x			lda candy_SP_Reg,x					; sprite register LO
-.21ed		85 38		sta $38				sta $38								; store for y indexing
-.21ef		a9 da		lda #$da			lda #$da							; sprite register HI
-.21f1		85 39		sta $39				sta $39 							; store for y indexing
-.21f3		a0 00		ldy #$00			ldy #$00
-.21f5		a9 11		lda #$11			lda #$11							; Set sprite on
-.21f7		91 38		sta ($38),y			sta ($38),y
-.21f9		c8		iny				iny
-.21fa		da		phx				phx
-.21fb		8a		txa				txa
-.21fc		0a		asl a				asl
-.21fd		aa		tax				tax
-.21fe		bd b0 2a	lda $2ab0,x			lda candyOrder,x					; set data address LO
-.2201		91 38		sta ($38),y			sta ($38),y
-.2203		c8		iny				iny
-.2204		bd b1 2a	lda $2ab1,x			lda candyOrder+1,x					; set data address MED
-.2207		91 38		sta ($38),y			sta ($38),y
-.2209		fa		plx				plx
+.216a		a2 00		ldx #$00			ldx #$00
+.216c						sidLooop:
+.216c		a9 00		lda #$00			lda #$00
+.216e		9d 00 d4	sta $d400,x			sta $d400,x
+.2171		9d 00 d5	sta $d500,x			sta $d500,x
+.2174		e8		inx				inx
+.2175		e0 18		cpx #$18			cpx #$18
+.2177		90 f3		bcc $216c			bcc sidLooop
+.2179		f0 f1		beq $216c			beq sidLooop
+.217b						GameStart:
+.217b		a9 00		lda #$00			lda #kernel.args.timer.FRAMES		; set the Timer to Frames
+.217d		09 80		ora #$80			ora #kernel.args.timer.QUERY		; and query what frame we're on
+.217f		85 f3		sta $f3				sta kernel.args.timer.units			; store in units parameter
+.2181		20 f0 ff	jsr $fff0			jsr kernel.Clock.SetTimer			; jsr to Kernel Routine
+.2184		b0 04		bcs $218a			bcs skipSet							; If Carry set, ignore
+.2186		69 01		adc #$01			adc #$01							; if not add 1 to Accumulator for next frame
+.2188		85 d0		sta $d0				sta $d0
+.218a						skipSet:
+.218a		20 a4 26	jsr $26a4			jsr SetTimer						; Let's get the kernel set up for the timer
+.218d		a2 00		ldx #$00			ldx #$00
+.218f						mAdd:
+.218f		bd 58 15	lda $1558,x			lda musicTable,x
+.2192		95 70		sta $70,x			sta $70,x
+.2194		e8		inx				inx
+.2195		e0 09		cpx #$09			cpx #$09
+.2197		d0 f6		bne $218f			bne mAdd
+.2199						systemStart:
+.2199		9c 00 d2	stz $d200			stz $d200
+.219c		a9 01		lda #$01			lda #$01
+.219e		8d a6 d6	sta $d6a6			sta Random_Reg
+.21a1		a9 0f		lda #$0f			lda #$0f							; set the SID volume to 15
+.21a3		8d 18 d4	sta $d418			sta SID_L_VOL
+.21a6		8d 18 d5	sta $d518			sta SID_R_VOL
+.21a9		a9 37		lda #$37			lda #$37
+.21ab		8d 05 d4	sta $d405			sta SID_L1_ATDL
+.21ae		8d 05 d5	sta $d505			sta SID_R1_ATDL
+.21b1		8d 0c d4	sta $d40c			sta SID_L2_ATDL
+.21b4		8d 0c d5	sta $d50c			sta SID_R2_ATDL
+.21b7		a9 52		lda #$52			lda #$52
+.21b9		8d 06 d5	sta $d506			sta SID_R1_STRL
+.21bc		8d 06 d4	sta $d406			sta SID_L1_STRL
+.21bf		8d 0d d5	sta $d50d			sta SID_R2_STRL
+.21c2		8d 0d d4	sta $d40d			sta SID_L2_STRL
+.21c5						setPlayer:
+.21c5		a9 11		lda #$11			lda #$11							;player
+.21c7		8d a0 d9	sta $d9a0			sta $d9a0
+.21ca		a9 08		lda #$08			lda #<player2
+.21cc		8d a1 d9	sta $d9a1			sta $d9a1
+.21cf		a9 63		lda #$63			lda #>player2
+.21d1		8d a2 d9	sta $d9a2			sta $d9a2
+.21d4		a9 01		lda #$01			lda #$01
+.21d6		8d a3 d9	sta $d9a3			sta $d9a3
+.21d9		a9 48		lda #$48			lda #$48
+.21db		8d a4 d9	sta $d9a4			sta $d9a4
+.21de		9c a5 d9	stz $d9a5			stz $d9a5
+.21e1		9c a7 d9	stz $d9a7			stz $d9a7
+.21e4						setCandy:
+.21e4		a2 00		ldx #$00			ldx #$00
+.21e6						cLoop:
+.21e6		a9 38		lda #$38			lda #$38
+.21e8		9d 5d 2a	sta $2a5d,x			sta candy_XLO,x						; X position of candy LO
+.21eb		a9 00		lda #$00			lda #$00
+.21ed		9d 71 2a	sta $2a71,x			sta candy_XHI,x 					; X position of candy HI
+.21f0		a9 15		lda #$15			lda #21
+.21f2		9d 49 2a	sta $2a49,x			sta candy_Flag,x					; current state (on steps)
+.21f5		bd 99 2a	lda $2a99,x			lda candy_Home,x					; home position of candy
+.21f8		9d 85 2a	sta $2a85,x			sta candy_YLO,x						; current y pos of candy
+.21fb		bd ad 2a	lda $2aad,x			lda candy_SP_Reg,x					; sprite register LO
+.21fe		85 38		sta $38				sta $38								; store for y indexing
+.2200		a9 da		lda #$da			lda #$da							; sprite register HI
+.2202		85 39		sta $39				sta $39 							; store for y indexing
+.2204		a0 00		ldy #$00			ldy #$00
+.2206		a9 11		lda #$11			lda #$11							; Set sprite on
+.2208		91 38		sta ($38),y			sta ($38),y
 .220a		c8		iny				iny
-.220b		a9 01		lda #$01			lda #$01							; set data Address HI
-.220d		91 38		sta ($38),y			sta ($38),y
-.220f		c8		iny				iny
-.2210		bd 4c 2a	lda $2a4c,x			lda candy_XLO,x 					; set X POS LO
-.2213		91 38		sta ($38),y			sta ($38),y
-.2215		c8		iny				iny
-.2216		a9 00		lda #$00			lda #$00							; set X POS HI
+.220b		da		phx				phx
+.220c		8a		txa				txa
+.220d		0a		asl a				asl
+.220e		aa		tax				tax
+.220f		bd c1 2a	lda $2ac1,x			lda candyOrder,x					; set data address LO
+.2212		91 38		sta ($38),y			sta ($38),y
+.2214		c8		iny				iny
+.2215		bd c2 2a	lda $2ac2,x			lda candyOrder+1,x					; set data address MED
 .2218		91 38		sta ($38),y			sta ($38),y
-.221a		c8		iny				iny
-.221b		bd 74 2a	lda $2a74,x			lda candy_YLO,x						; set Y POS LO
+.221a		fa		plx				plx
+.221b		c8		iny				iny
+.221c		a9 01		lda #$01			lda #$01							; set data Address HI
 .221e		91 38		sta ($38),y			sta ($38),y
 .2220		c8		iny				iny
-.2221		a9 00		lda #$00			lda #$00							; set Y POS HI
-.2223		91 38		sta ($38),y			sta ($38),y
-.2225		e8		inx				inx
-.2226		e0 14		cpx #$14			cpx #20
-.2228		f0 02		beq $222c			beq candyDone
-.222a		80 a9		bra $21d5			bra cLoop
-.222c						candyDone:
-.222c		a9 01		lda #$01			lda #$01
-.222e		8d df 28	sta $28df			sta level
-.2231		9c dd 28	stz $28dd			stz score
-.2234		9c de 28	stz $28de			stz score+1
-.2237		9c db 28	stz $28db			stz happyKids
-.223a		9c dc 28	stz $28dc			stz happyKids+1
-.223d		9c 0b 29	stz $290b			stz happyKidsHex
-.2240		9c 0c 29	stz $290c			stz happyKidsHex+1
-.2243		a9 04		lda #$04			lda #$04
-.2245		8d 0e 29	sta $290e			sta speed
-.2248		a2 00		ldx #$00			ldx #$00
-.224a						setKidsSpeedLoop:
-.224a		ad a4 d6	lda $d6a4			lda Random_L
-.224d		29 03		and #$03			and #$03
-.224f		18		clc				clc
-.2250		69 04		adc #$04			adc #$04
-.2252		9d 74 29	sta $2974,x			sta kids_Speed,x
-.2255		ad a4 d6	lda $d6a4			lda Random_L
-.2258		29 03		and #$03			and #$03
-.225a		a8		tay				tay
-.225b		b9 df 2a	lda $2adf,y			lda playerPosTable,y
-.225e		9d 4c 29	sta $294c,x			sta kids_YLO,x
-.2261		a9 60		lda #$60			lda #$60
-.2263		9d 24 29	sta $2924,x			sta kids_XLO,x
-.2266		a9 01		lda #$01			lda #$01
-.2268		9d 38 29	sta $2938,x			sta kids_XHI,x
-.226b		9d 10 29	sta $2910,x			sta kids_Flag,x
-.226e		a9 00		lda #$00			lda #$00
-.2270		9d 60 29	sta $2960,x			sta kids_Treat,x
-.2273		e8		inx				inx
-.2274		e0 14		cpx #$14			cpx #20
-.2276		90 d2		bcc $224a			bcc setKidsSpeedLoop
-.2278						GameLoop:
-.2278		20 af 22	jsr $22af			jsr handle_events					; check the events handler
-.227b		ad d9 28	lda $28d9			lda gameOn
-.227e		f0 03		beq $2283			beq endGame
-.2280		4c 78 22	jmp $2278			jmp GameLoop
-.2283						endGame:
-.2283		a9 01		lda #$01			lda #$01
-.2285		8d 00 d2	sta $d200			sta $d200
-.2288		a2 00		ldx #$00			ldx #$00
-.228a		ad 0f 29	lda $290f			lda simpleCounter
-.228d		69 78		adc #$78			adc #$78
-.228f		85 22		sta $22				sta $22
-.2291						eGameLoop:
-.2291		20 af 22	jsr $22af			jsr handle_events
-.2294		ad 0f 29	lda $290f			lda simpleCounter
-.2297		c5 22		cmp $22				cmp $22
-.2299		d0 f6		bne $2291			bne eGameLoop
-.229b						checkToStart:
-.229b		20 af 22	jsr $22af			jsr handle_events
-.229e		ad ff 2a	lda $2aff			lda joyB
-.22a1		f0 f8		beq $229b			beq checkToStart
-.22a3		8e ff 2a	stx $2aff			stx joyB
-.22a6						startGame:
-.22a6		ee d9 28	inc $28d9			inc gameOn
-.22a9		ee da 28	inc $28da			inc musicOn
-.22ac		4c 88 21	jmp $2188			jmp systemStart
-.22af						handle_events:
-.22af		a5 f2		lda $f2				lda kernel.args.events.pending		; Peek at the queue to see if anything is pending
-.22b1		10 0b		bpl $22be			bpl done_handle_events				; Nothing to do
-.22b3		20 00 ff	jsr $ff00			jsr kernel.NextEvent				; Get the next event.
-.22b6		b0 06		bcs $22be			bcs done_handle_events				; If Carry is set, skip the handler
-.22b8		20 bf 22	jsr $22bf			jsr dispatch						; Handle the event
-.22bb		4c af 22	jmp $22af			jmp handle_events					; go and check for another event
-.22be						done_handle_events:
-.22be		60		rts				rts
-.22bf						dispatch:
-.22bf		a5 a0		lda $a0				lda event.type						; get the event type from Kernel
-.22c1		c9 52		cmp #$52			cmp #kernel.event.timer.EXPIRED		; is the event timer.EXPIRED?
-.22c3		f0 32		beq $22f7			beq UpdateScreen					; run the screen update
-.22c5		c9 04		cmp #$04			cmp #kernel.event.JOYSTICK			; is the event a Joystick Change?
-.22c7		f0 01		beq $22ca			beq setJoyStick
-.22c9		60		rts				rts
-.22ca						setJoyStick:
-.22ca		a5 a4		lda $a4				lda event.joystick.joy1
-.22cc		85 d8		sta $d8				sta $d8								; Temp save joystick state
-.22ce		9c fd 2a	stz $2afd			stz joyX							; reset all directions and button to zero
-.22d1		9c fe 2a	stz $2afe			stz joyY
-.22d4		9c ff 2a	stz $2aff			stz joyB
-.22d7						jUp:
-.22d7		a5 d8		lda $d8				lda $d8								; reload joystick state
-.22d9		29 01		and #$01			and #$01							; check for up
-.22db		f0 05		beq $22e2			beq jDown							; if not up skip to test down
-.22dd		ce fe 2a	dec $2afe			dec joyY							; if up dec joy Y direction to $ff
-.22e0		80 09		bra $22eb			bra jButton							; skip down test
-.22e2						jDown:
-.22e2		a5 d8		lda $d8				lda $d8								; reload joystick state
-.22e4		29 02		and #$02			and #$02							; check for down
-.22e6		f0 03		beq $22eb			beq jButton							; if not down skip
-.22e8		ee fe 2a	inc $2afe			inc joyY							; incrment Joy y direction to $01
-.22eb						jButton:
-.22eb		a5 d8		lda $d8				lda $d8								; reload joystick state
-.22ed		29 10		and #$10			and #$10							; check for button 0
-.22ef		f0 05		beq $22f6			beq jDone							; no button, we are done
-.22f1		a9 01		lda #$01			lda #$01
-.22f3		8d ff 2a	sta $2aff			sta joyB							; yes botton, set joy B to 1
-.22f6						jDone:
-.22f6		60		rts				rts
-.22f7						UpdateScreen:
-.22f7		20 93 26	jsr $2693			jsr SetTimer						; Reset the next timer for SOF
-.22fa		20 b6 27	jsr $27b6			jsr music
-.22fd		20 1b 23	jsr $231b			jsr checkJoy
-.2300		20 2b 26	jsr $262b			jsr moonrise
-.2303		ee 0f 29	inc $290f			inc simpleCounter
-.2306		ad d9 28	lda $28d9			lda gameOn
-.2309		f0 0f		beq $231a			beq noPlay
-.230b		20 2f 25	jsr $252f			jsr walkers							; These are the trick or treaters
-.230e		20 9f 23	jsr $239f			jsr checkB
-.2311		20 24 24	jsr $2424			jsr throwCandy
-.2314		20 22 27	jsr $2722			jsr scoring
-.2317		20 f0 26	jsr $26f0			jsr checkLevelUp
-.231a						noPlay:
-.231a		60		rts				rts
-.231b						checkJoy:
-.231b		ad e3 2a	lda $2ae3			lda moving
-.231e		d0 0f		bne $232f			bne move
-.2320		ad fe 2a	lda $2afe			lda joyY
-.2323		f0 76		beq $239b			beq joyDone
-.2325		c9 01		cmp #$01			cmp #$01
-.2327		f0 4e		beq $2377			beq goDown
-.2329		c9 ff		cmp #$ff			cmp #$ff
-.232b		f0 5e		beq $238b			beq goUP
-.232d		80 6c		bra $239b			bra joyDone
-.232f						move:
-.232f		18		clc				clc
-.2330		ad da 2a	lda $2ada			lda playerYLO
-.2333		6d e4 2a	adc $2ae4			adc pDir
-.2336		8d da 2a	sta $2ada			sta playerYLO
-.2339		8d a6 d9	sta $d9a6			sta $d9a6
-.233c		ee dd 2a	inc $2add			inc playerStep
-.233f		ad dd 2a	lda $2add			lda playerStep
-.2342		29 03		and #$03			and #$03
-.2344		0a		asl a				asl
-.2345		aa		tax				tax
-.2346		ad e4 2a	lda $2ae4			lda pDir
-.2349		30 0e		bmi $2359			bmi faceAway
-.234b		bd e5 2a	lda $2ae5,x			lda playerTable1,x
-.234e		8d a1 d9	sta $d9a1			sta $d9a1
-.2351		bd e6 2a	lda $2ae6,x			lda playerTable1+1,X
-.2354		8d a2 d9	sta $d9a2			sta $d9a2
-.2357		80 0e		bra $2367			bra checkPOS
-.2359						faceAway:
-.2359		bd ed 2a	lda $2aed,x			lda playerTable2,x
-.235c		8d a1 d9	sta $d9a1			sta $d9a1
-.235f		bd ee 2a	lda $2aee,x			lda playerTable2+1,X
-.2362		8d a2 d9	sta $d9a2			sta $d9a2
-.2365		80 00		bra $2367			bra checkPOS
-.2367						checkPOS:
-.2367		ae dc 2a	ldx $2adc			ldx playerPOS
-.236a		bd df 2a	lda $2adf,x			lda playerPosTable,x
-.236d		cd da 2a	cmp $2ada			cmp playerYLO
-.2370		d0 29		bne $239b			bne joyDone
-.2372		9c e3 2a	stz $2ae3			stz moving
-.2375		80 24		bra $239b			bra joyDone
-.2377						goDown:
-.2377		ad dc 2a	lda $2adc			lda playerPOS
-.237a		c9 03		cmp #$03			cmp #$03
-.237c		f0 1d		beq $239b			beq joyDone
-.237e		ee e3 2a	inc $2ae3			inc moving
-.2381		ee dc 2a	inc $2adc			inc playerPOS
-.2384		a9 02		lda #$02		    lda #$02
-.2386		8d e4 2a	sta $2ae4			sta pDir
-.2389		80 10		bra $239b			bra joyDone
-.238b						goUP:
-.238b		ad dc 2a	lda $2adc			lda playerPOS
-.238e		f0 0b		beq $239b			beq joyDone
-.2390		ee e3 2a	inc $2ae3			inc moving
-.2393		ce dc 2a	dec $2adc			dec playerPOS
-.2396		a9 fd		lda #$fd			lda #$fd
-.2398		8d e4 2a	sta $2ae4			sta pDir
-.239b						joyDone:
-.239b		60		rts				rts
-.239c						hc:
-.239c		4c 23 24	jmp $2423			jmp holdCandy
-.239f						checkB:
-.239f		ad ff 2a	lda $2aff			lda joyB
-.23a2		f0 5a		beq $23fe			beq noPress
-.23a4		ad de 2a	lda $2ade			lda playerCandy
-.23a7		c9 15		cmp #$15			cmp #21
-.23a9		d0 f1		bne $239c			bne hc
-.23ab		20 b1 23	jsr $23b1			jsr getCandy
-.23ae		4c 23 24	jmp $2423			jmp doneButton
-.23b1						getCandy:
-.23b1		a2 00		ldx #$00			ldx #$00
-.23b3						gCandyLoop:
-.23b3		a9 01		lda #$01			lda #$01
-.23b5		8d 00 2b	sta $2b00			sta joyHold
-.23b8		bd 38 2a	lda $2a38,x			lda candy_Flag,x
-.23bb		c9 15		cmp #$15			cmp #21
-.23bd		d0 36		bne $23f5			bne nextCandy
-.23bf		bd 74 2a	lda $2a74,x			lda candy_YLO,x
-.23c2		cd da 2a	cmp $2ada			cmp playerYLO
-.23c5		d0 2e		bne $23f5			bne nextCandy
-.23c7		8e de 2a	stx $2ade			stx playerCandy
-.23ca		a9 01		lda #$01			lda #$01
-.23cc		9d 38 2a	sta $2a38,x			sta candy_Flag,x
-.23cf		a9 40		lda #$40			lda #$40
-.23d1		9d 4c 2a	sta $2a4c,x			sta candy_XLO,x
-.23d4		bd 9c 2a	lda $2a9c,x			lda candy_SP_Reg,x					; sprite register LO
-.23d7		85 38		sta $38				sta $38								; store for y indexing
-.23d9		a9 da		lda #$da			lda #$da							; sprite register HI
-.23db		85 39		sta $39				sta $39 							; store for y indexing
-.23dd		a0 04		ldy #$04			ldy #SP_POS_X_L
-.23df		bd 4c 2a	lda $2a4c,x			lda candy_XLO,x 					; get X POS LO
-.23e2		91 38		sta ($38),y			sta ($38),y
-.23e4		a9 08		lda #$08			lda #<player7
-.23e6		8d a1 d9	sta $d9a1			sta playerSP+SP_AD_L
-.23e9		a9 77		lda #$77			lda #>player7
-.23eb		8d a2 d9	sta $d9a2			sta playerSP+SP_AD_M
-.23ee		a9 01		lda #$01			lda #$01
-.23f0		8d a3 d9	sta $d9a3			sta playerSP+SP_AD_H
-.23f3		80 08		bra $23fd			bra clDone
-.23f5						nextCandy:
-.23f5		e8		inx				inx
-.23f6		e0 15		cpx #$15			cpx #21
-.23f8		d0 b9		bne $23b3			bne gCandyLoop
-.23fa		8e de 2a	stx $2ade			stx playerCandy
-.23fd						clDone:
-.23fd		60		rts				rts
-.23fe						noPress:
-.23fe		ad 00 2b	lda $2b00			lda joyHold
-.2401		f0 20		beq $2423			beq doneButton
-.2403		ad de 2a	lda $2ade			lda playerCandy
-.2406		aa		tax				tax
-.2407		fe 38 2a	inc $2a38,x			inc candy_Flag,x
-.240a		a9 15		lda #$15			lda #21
-.240c		8d de 2a	sta $2ade			sta playerCandy
-.240f		a9 08		lda #$08			lda #<player8
-.2411		8d a1 d9	sta $d9a1			sta playerSP+SP_AD_L
-.2414		a9 7b		lda #$7b			lda #>player8
-.2416		8d a2 d9	sta $d9a2			sta playerSP+SP_AD_M
-.2419		a9 01		lda #$01			lda #$01
-.241b		8d a3 d9	sta $d9a3			sta playerSP+SP_AD_H
-.241e		9c 00 2b	stz $2b00			stz joyHold
-.2421		80 00		bra $2423			bra doneButton
-.2423						holdCandy:
-.2423						doneButton:
-.2423		60		rts				rts
-.2424						throwCandy:
-.2424		a2 00		ldx #$00			ldx #$00
-.2426						tLoop:
-.2426		bd 38 2a	lda $2a38,x			lda candy_Flag,x
-.2429		c9 02		cmp #$02			cmp #$02
-.242b		d0 22		bne $244f			bne nt
-.242d		18		clc				clc
-.242e		bd 4c 2a	lda $2a4c,x			lda candy_XLO,x
-.2431		69 01		adc #$01			adc #$01
-.2433		9d 4c 2a	sta $2a4c,x			sta candy_XLO,x
-.2436		bd 60 2a	lda $2a60,x			lda candy_XHI,x
-.2439		69 00		adc #$00			adc #$00
-.243b		9d 60 2a	sta $2a60,x			sta candy_XHI,x
-.243e		bd 4c 2a	lda $2a4c,x			lda candy_XLO,x 						;take candy out of the game if off the board
-.2441		c9 60		cmp #$60			cmp #$60
-.2443		90 0d		bcc $2452			bcc cCollision
-.2445		bd 60 2a	lda $2a60,x			lda candy_XHI,x
-.2448		f0 08		beq $2452			beq cCollision
-.244a		a9 ff		lda #$ff			lda #$ff
-.244c		9d 38 2a	sta $2a38,x			sta candy_Flag,x
-.244f		4c 26 25	jmp $2526	nt:		jmp nextThrow
-.2452						cCollision:
-.2452		a0 00		ldy #$00			ldy #$00
-.2454						collision:
-.2454		bd 4c 2a	lda $2a4c,x			lda candy_XLO,x
-.2457		d9 24 29	cmp $2924,y			cmp kids_XLO,y
-.245a		90 17		bcc $2473			bcc nextKid
-.245c		bd 60 2a	lda $2a60,x			lda candy_XHI,x
-.245f		d9 38 29	cmp $2938,y			cmp kids_XHI,y
-.2462		d0 0f		bne $2473			bne nextKid
-.2464		bd 74 2a	lda $2a74,x			lda candy_YLO,x
-.2467		d9 4c 29	cmp $294c,y			cmp kids_YLO,y
-.246a		d0 07		bne $2473			bne nextKid
-.246c		b9 60 29	lda $2960,y			lda kids_Treat,y
-.246f		d0 02		bne $2473			bne nextKid
-.2471		80 08		bra $247b			bra hit
-.2473						nextKid:
-.2473		c8		iny				iny
-.2474		c0 15		cpy #$15			cpy #21
-.2476		d0 dc		bne $2454			bne collision
-.2478		4c ea 24	jmp $24ea			jmp draWThrow
-.247b						hit:
-.247b		a9 01		lda #$01			lda #$01
-.247d		99 60 29	sta $2960,y			sta kids_Treat,y
-.2480		a9 38		lda #$38			lda #$38
-.2482		9d 4c 2a	sta $2a4c,x			sta candy_XLO,x						; X position of candy LO
-.2485		a9 00		lda #$00			lda #$00
-.2487		9d 60 2a	sta $2a60,x			sta candy_XHI,x 					; X position of candy HI
-.248a		a9 15		lda #$15			lda #21
-.248c		9d 38 2a	sta $2a38,x			sta candy_Flag,x					; current state (on steps)
-.248f		bd 88 2a	lda $2a88,x			lda candy_Home,x					; home position of candy
-.2492		9d 74 2a	sta $2a74,x			sta candy_YLO,x						; current y pos of candy
-.2495		f8		sed				sed
-.2496		18		clc				clc
-.2497		ad db 28	lda $28db			lda happyKids
-.249a		69 01		adc #$01			adc #$01
-.249c		8d db 28	sta $28db			sta happyKids
-.249f		ad dc 28	lda $28dc			lda happyKids+1
-.24a2		69 00		adc #$00			adc #$00
-.24a4		8d dc 28	sta $28dc			sta happyKids+1
-.24a7		86 80		stx $80				stx $80
-.24a9		ae df 28	ldx $28df			ldx level
-.24ac		18		clc				clc
-.24ad		ad dd 28	lda $28dd			lda score
-.24b0		7d 13 2b	adc $2b13,x			adc levelScoring,x
-.24b3		8d dd 28	sta $28dd			sta score
-.24b6		ad de 28	lda $28de			lda score+1
-.24b9		69 00		adc #$00			adc #$00
-.24bb		8d de 28	sta $28de			sta score+1
-.24be		d8		cld				cld
-.24bf		18		clc				clc
-.24c0		ad 0b 29	lda $290b			lda happyKidsHex
-.24c3		69 01		adc #$01			adc #$01
-.24c5		8d 0b 29	sta $290b			sta happyKidsHex
-.24c8		ad 0c 29	lda $290c			lda happyKidsHex+1
-.24cb		69 00		adc #$00			adc #$00
-.24cd		8d 0c 29	sta $290c			sta happyKidsHex+1
-.24d0		bd 0d 2b	lda $2b0d,x			lda levelAdvance,x
-.24d3		cd 0b 29	cmp $290b			cmp happyKidsHex
-.24d6		d0 10		bne $24e8			bne keepLevel
-.24d8		ee 0d 29	inc $290d			inc levelUpFlag
-.24db		ee df 28	inc $28df			inc level
-.24de		ad df 28	lda $28df			lda level
-.24e1		c9 06		cmp #$06			cmp #$06
-.24e3		d0 03		bne $24e8			bne keepLevel
-.24e5		ce df 28	dec $28df			dec level
-.24e8						keepLevel:
-.24e8		a6 80		ldx $80				ldx $80
-.24ea						draWThrow:
-.24ea		bd 9c 2a	lda $2a9c,x			lda candy_SP_Reg,x					; sprite register LO
-.24ed		85 38		sta $38				sta $38								; store for y indexing
-.24ef		a9 da		lda #$da			lda #$da							; sprite register HI
-.24f1		85 39		sta $39				sta $39 							; store for y indexing
-.24f3		a0 00		ldy #$00			ldy #$00
-.24f5		a9 11		lda #$11			lda #$11							; Set sprite on
-.24f7		c8		iny				iny
-.24f8		da		phx				phx
-.24f9		8a		txa				txa
-.24fa		0a		asl a				asl
-.24fb		aa		tax				tax
-.24fc		bd b0 2a	lda $2ab0,x			lda candyOrder,x					; set data address LO
-.24ff		91 38		sta ($38),y			sta ($38),y
-.2501		c8		iny				iny
-.2502		bd b1 2a	lda $2ab1,x			lda candyOrder+1,x					; set data address MED
-.2505		91 38		sta ($38),y			sta ($38),y
-.2507		fa		plx				plx
+.2221		bd 5d 2a	lda $2a5d,x			lda candy_XLO,x 					; set X POS LO
+.2224		91 38		sta ($38),y			sta ($38),y
+.2226		c8		iny				iny
+.2227		a9 00		lda #$00			lda #$00							; set X POS HI
+.2229		91 38		sta ($38),y			sta ($38),y
+.222b		c8		iny				iny
+.222c		bd 85 2a	lda $2a85,x			lda candy_YLO,x						; set Y POS LO
+.222f		91 38		sta ($38),y			sta ($38),y
+.2231		c8		iny				iny
+.2232		a9 00		lda #$00			lda #$00							; set Y POS HI
+.2234		91 38		sta ($38),y			sta ($38),y
+.2236		e8		inx				inx
+.2237		e0 14		cpx #$14			cpx #20
+.2239		f0 02		beq $223d			beq candyDone
+.223b		80 a9		bra $21e6			bra cLoop
+.223d						candyDone:
+.223d		a9 01		lda #$01			lda #$01
+.223f		8d f0 28	sta $28f0			sta level
+.2242		9c ee 28	stz $28ee			stz score
+.2245		9c ef 28	stz $28ef			stz score+1
+.2248		9c ec 28	stz $28ec			stz happyKids
+.224b		9c ed 28	stz $28ed			stz happyKids+1
+.224e		9c 1c 29	stz $291c			stz happyKidsHex
+.2251		9c 1d 29	stz $291d			stz happyKidsHex+1
+.2254		a9 04		lda #$04			lda #$04
+.2256		8d 1f 29	sta $291f			sta speed
+.2259		a2 00		ldx #$00			ldx #$00
+.225b						setKidsSpeedLoop:
+.225b		ad a4 d6	lda $d6a4			lda Random_L
+.225e		29 03		and #$03			and #$03
+.2260		18		clc				clc
+.2261		69 04		adc #$04			adc #$04
+.2263		9d 85 29	sta $2985,x			sta kids_Speed,x
+.2266		ad a4 d6	lda $d6a4			lda Random_L
+.2269		29 03		and #$03			and #$03
+.226b		a8		tay				tay
+.226c		b9 f0 2a	lda $2af0,y			lda playerPosTable,y
+.226f		9d 5d 29	sta $295d,x			sta kids_YLO,x
+.2272		a9 60		lda #$60			lda #$60
+.2274		9d 35 29	sta $2935,x			sta kids_XLO,x
+.2277		a9 01		lda #$01			lda #$01
+.2279		9d 49 29	sta $2949,x			sta kids_XHI,x
+.227c		9d 21 29	sta $2921,x			sta kids_Flag,x
+.227f		a9 00		lda #$00			lda #$00
+.2281		9d 71 29	sta $2971,x			sta kids_Treat,x
+.2284		e8		inx				inx
+.2285		e0 14		cpx #$14			cpx #20
+.2287		90 d2		bcc $225b			bcc setKidsSpeedLoop
+.2289						GameLoop:
+.2289		20 c0 22	jsr $22c0			jsr handle_events					; check the events handler
+.228c		ad ea 28	lda $28ea			lda gameOn
+.228f		f0 03		beq $2294			beq endGame
+.2291		4c 89 22	jmp $2289			jmp GameLoop
+.2294						endGame:
+.2294		a9 01		lda #$01			lda #$01
+.2296		8d 00 d2	sta $d200			sta $d200
+.2299		a2 00		ldx #$00			ldx #$00
+.229b		ad 20 29	lda $2920			lda simpleCounter
+.229e		69 78		adc #$78			adc #$78
+.22a0		85 22		sta $22				sta $22
+.22a2						eGameLoop:
+.22a2		20 c0 22	jsr $22c0			jsr handle_events
+.22a5		ad 20 29	lda $2920			lda simpleCounter
+.22a8		c5 22		cmp $22				cmp $22
+.22aa		d0 f6		bne $22a2			bne eGameLoop
+.22ac						checkToStart:
+.22ac		20 c0 22	jsr $22c0			jsr handle_events
+.22af		ad 10 2b	lda $2b10			lda joyB
+.22b2		f0 f8		beq $22ac			beq checkToStart
+.22b4		8e 10 2b	stx $2b10			stx joyB
+.22b7						startGame:
+.22b7		ee ea 28	inc $28ea			inc gameOn
+.22ba		ee eb 28	inc $28eb			inc musicOn
+.22bd		4c 99 21	jmp $2199			jmp systemStart
+.22c0						handle_events:
+.22c0		a5 f2		lda $f2				lda kernel.args.events.pending		; Peek at the queue to see if anything is pending
+.22c2		10 0b		bpl $22cf			bpl done_handle_events				; Nothing to do
+.22c4		20 00 ff	jsr $ff00			jsr kernel.NextEvent				; Get the next event.
+.22c7		b0 06		bcs $22cf			bcs done_handle_events				; If Carry is set, skip the handler
+.22c9		20 d0 22	jsr $22d0			jsr dispatch						; Handle the event
+.22cc		4c c0 22	jmp $22c0			jmp handle_events					; go and check for another event
+.22cf						done_handle_events:
+.22cf		60		rts				rts
+.22d0						dispatch:
+.22d0		a5 a0		lda $a0				lda event.type						; get the event type from Kernel
+.22d2		c9 52		cmp #$52			cmp #kernel.event.timer.EXPIRED		; is the event timer.EXPIRED?
+.22d4		f0 32		beq $2308			beq UpdateScreen					; run the screen update
+.22d6		c9 04		cmp #$04			cmp #kernel.event.JOYSTICK			; is the event a Joystick Change?
+.22d8		f0 01		beq $22db			beq setJoyStick
+.22da		60		rts				rts
+.22db						setJoyStick:
+.22db		a5 a4		lda $a4				lda event.joystick.joy1
+.22dd		85 d8		sta $d8				sta $d8								; Temp save joystick state
+.22df		9c 0e 2b	stz $2b0e			stz joyX							; reset all directions and button to zero
+.22e2		9c 0f 2b	stz $2b0f			stz joyY
+.22e5		9c 10 2b	stz $2b10			stz joyB
+.22e8						jUp:
+.22e8		a5 d8		lda $d8				lda $d8								; reload joystick state
+.22ea		29 01		and #$01			and #$01							; check for up
+.22ec		f0 05		beq $22f3			beq jDown							; if not up skip to test down
+.22ee		ce 0f 2b	dec $2b0f			dec joyY							; if up dec joy Y direction to $ff
+.22f1		80 09		bra $22fc			bra jButton							; skip down test
+.22f3						jDown:
+.22f3		a5 d8		lda $d8				lda $d8								; reload joystick state
+.22f5		29 02		and #$02			and #$02							; check for down
+.22f7		f0 03		beq $22fc			beq jButton							; if not down skip
+.22f9		ee 0f 2b	inc $2b0f			inc joyY							; incrment Joy y direction to $01
+.22fc						jButton:
+.22fc		a5 d8		lda $d8				lda $d8								; reload joystick state
+.22fe		29 10		and #$10			and #$10							; check for button 0
+.2300		f0 05		beq $2307			beq jDone							; no button, we are done
+.2302		a9 01		lda #$01			lda #$01
+.2304		8d 10 2b	sta $2b10			sta joyB							; yes botton, set joy B to 1
+.2307						jDone:
+.2307		60		rts				rts
+.2308						UpdateScreen:
+.2308		20 a4 26	jsr $26a4			jsr SetTimer						; Reset the next timer for SOF
+.230b		20 c7 27	jsr $27c7			jsr music
+.230e		20 2c 23	jsr $232c			jsr checkJoy
+.2311		20 3c 26	jsr $263c			jsr moonrise
+.2314		ee 20 29	inc $2920			inc simpleCounter
+.2317		ad ea 28	lda $28ea			lda gameOn
+.231a		f0 0f		beq $232b			beq noPlay
+.231c		20 40 25	jsr $2540			jsr walkers							; These are the trick or treaters
+.231f		20 b0 23	jsr $23b0			jsr checkB
+.2322		20 35 24	jsr $2435			jsr throwCandy
+.2325		20 33 27	jsr $2733			jsr scoring
+.2328		20 01 27	jsr $2701			jsr checkLevelUp
+.232b						noPlay:
+.232b		60		rts				rts
+.232c						checkJoy:
+.232c		ad f4 2a	lda $2af4			lda moving
+.232f		d0 0f		bne $2340			bne move
+.2331		ad 0f 2b	lda $2b0f			lda joyY
+.2334		f0 76		beq $23ac			beq joyDone
+.2336		c9 01		cmp #$01			cmp #$01
+.2338		f0 4e		beq $2388			beq goDown
+.233a		c9 ff		cmp #$ff			cmp #$ff
+.233c		f0 5e		beq $239c			beq goUP
+.233e		80 6c		bra $23ac			bra joyDone
+.2340						move:
+.2340		18		clc				clc
+.2341		ad eb 2a	lda $2aeb			lda playerYLO
+.2344		6d f5 2a	adc $2af5			adc pDir
+.2347		8d eb 2a	sta $2aeb			sta playerYLO
+.234a		8d a6 d9	sta $d9a6			sta $d9a6
+.234d		ee ee 2a	inc $2aee			inc playerStep
+.2350		ad ee 2a	lda $2aee			lda playerStep
+.2353		29 03		and #$03			and #$03
+.2355		0a		asl a				asl
+.2356		aa		tax				tax
+.2357		ad f5 2a	lda $2af5			lda pDir
+.235a		30 0e		bmi $236a			bmi faceAway
+.235c		bd f6 2a	lda $2af6,x			lda playerTable1,x
+.235f		8d a1 d9	sta $d9a1			sta $d9a1
+.2362		bd f7 2a	lda $2af7,x			lda playerTable1+1,X
+.2365		8d a2 d9	sta $d9a2			sta $d9a2
+.2368		80 0e		bra $2378			bra checkPOS
+.236a						faceAway:
+.236a		bd fe 2a	lda $2afe,x			lda playerTable2,x
+.236d		8d a1 d9	sta $d9a1			sta $d9a1
+.2370		bd ff 2a	lda $2aff,x			lda playerTable2+1,X
+.2373		8d a2 d9	sta $d9a2			sta $d9a2
+.2376		80 00		bra $2378			bra checkPOS
+.2378						checkPOS:
+.2378		ae ed 2a	ldx $2aed			ldx playerPOS
+.237b		bd f0 2a	lda $2af0,x			lda playerPosTable,x
+.237e		cd eb 2a	cmp $2aeb			cmp playerYLO
+.2381		d0 29		bne $23ac			bne joyDone
+.2383		9c f4 2a	stz $2af4			stz moving
+.2386		80 24		bra $23ac			bra joyDone
+.2388						goDown:
+.2388		ad ed 2a	lda $2aed			lda playerPOS
+.238b		c9 03		cmp #$03			cmp #$03
+.238d		f0 1d		beq $23ac			beq joyDone
+.238f		ee f4 2a	inc $2af4			inc moving
+.2392		ee ed 2a	inc $2aed			inc playerPOS
+.2395		a9 02		lda #$02		    lda #$02
+.2397		8d f5 2a	sta $2af5			sta pDir
+.239a		80 10		bra $23ac			bra joyDone
+.239c						goUP:
+.239c		ad ed 2a	lda $2aed			lda playerPOS
+.239f		f0 0b		beq $23ac			beq joyDone
+.23a1		ee f4 2a	inc $2af4			inc moving
+.23a4		ce ed 2a	dec $2aed			dec playerPOS
+.23a7		a9 fd		lda #$fd			lda #$fd
+.23a9		8d f5 2a	sta $2af5			sta pDir
+.23ac						joyDone:
+.23ac		60		rts				rts
+.23ad						hc:
+.23ad		4c 34 24	jmp $2434			jmp holdCandy
+.23b0						checkB:
+.23b0		ad 10 2b	lda $2b10			lda joyB
+.23b3		f0 5a		beq $240f			beq noPress
+.23b5		ad ef 2a	lda $2aef			lda playerCandy
+.23b8		c9 15		cmp #$15			cmp #21
+.23ba		d0 f1		bne $23ad			bne hc
+.23bc		20 c2 23	jsr $23c2			jsr getCandy
+.23bf		4c 34 24	jmp $2434			jmp doneButton
+.23c2						getCandy:
+.23c2		a2 00		ldx #$00			ldx #$00
+.23c4						gCandyLoop:
+.23c4		a9 01		lda #$01			lda #$01
+.23c6		8d 11 2b	sta $2b11			sta joyHold
+.23c9		bd 49 2a	lda $2a49,x			lda candy_Flag,x
+.23cc		c9 15		cmp #$15			cmp #21
+.23ce		d0 36		bne $2406			bne nextCandy
+.23d0		bd 85 2a	lda $2a85,x			lda candy_YLO,x
+.23d3		cd eb 2a	cmp $2aeb			cmp playerYLO
+.23d6		d0 2e		bne $2406			bne nextCandy
+.23d8		8e ef 2a	stx $2aef			stx playerCandy
+.23db		a9 01		lda #$01			lda #$01
+.23dd		9d 49 2a	sta $2a49,x			sta candy_Flag,x
+.23e0		a9 40		lda #$40			lda #$40
+.23e2		9d 5d 2a	sta $2a5d,x			sta candy_XLO,x
+.23e5		bd ad 2a	lda $2aad,x			lda candy_SP_Reg,x					; sprite register LO
+.23e8		85 38		sta $38				sta $38								; store for y indexing
+.23ea		a9 da		lda #$da			lda #$da							; sprite register HI
+.23ec		85 39		sta $39				sta $39 							; store for y indexing
+.23ee		a0 04		ldy #$04			ldy #SP_POS_X_L
+.23f0		bd 5d 2a	lda $2a5d,x			lda candy_XLO,x 					; get X POS LO
+.23f3		91 38		sta ($38),y			sta ($38),y
+.23f5		a9 08		lda #$08			lda #<player7
+.23f7		8d a1 d9	sta $d9a1			sta playerSP+SP_AD_L
+.23fa		a9 77		lda #$77			lda #>player7
+.23fc		8d a2 d9	sta $d9a2			sta playerSP+SP_AD_M
+.23ff		a9 01		lda #$01			lda #$01
+.2401		8d a3 d9	sta $d9a3			sta playerSP+SP_AD_H
+.2404		80 08		bra $240e			bra clDone
+.2406						nextCandy:
+.2406		e8		inx				inx
+.2407		e0 15		cpx #$15			cpx #21
+.2409		d0 b9		bne $23c4			bne gCandyLoop
+.240b		8e ef 2a	stx $2aef			stx playerCandy
+.240e						clDone:
+.240e		60		rts				rts
+.240f						noPress:
+.240f		ad 11 2b	lda $2b11			lda joyHold
+.2412		f0 20		beq $2434			beq doneButton
+.2414		ad ef 2a	lda $2aef			lda playerCandy
+.2417		aa		tax				tax
+.2418		fe 49 2a	inc $2a49,x			inc candy_Flag,x
+.241b		a9 15		lda #$15			lda #21
+.241d		8d ef 2a	sta $2aef			sta playerCandy
+.2420		a9 08		lda #$08			lda #<player8
+.2422		8d a1 d9	sta $d9a1			sta playerSP+SP_AD_L
+.2425		a9 7b		lda #$7b			lda #>player8
+.2427		8d a2 d9	sta $d9a2			sta playerSP+SP_AD_M
+.242a		a9 01		lda #$01			lda #$01
+.242c		8d a3 d9	sta $d9a3			sta playerSP+SP_AD_H
+.242f		9c 11 2b	stz $2b11			stz joyHold
+.2432		80 00		bra $2434			bra doneButton
+.2434						holdCandy:
+.2434						doneButton:
+.2434		60		rts				rts
+.2435						throwCandy:
+.2435		a2 00		ldx #$00			ldx #$00
+.2437						tLoop:
+.2437		bd 49 2a	lda $2a49,x			lda candy_Flag,x
+.243a		c9 02		cmp #$02			cmp #$02
+.243c		d0 22		bne $2460			bne nt
+.243e		18		clc				clc
+.243f		bd 5d 2a	lda $2a5d,x			lda candy_XLO,x
+.2442		69 01		adc #$01			adc #$01
+.2444		9d 5d 2a	sta $2a5d,x			sta candy_XLO,x
+.2447		bd 71 2a	lda $2a71,x			lda candy_XHI,x
+.244a		69 00		adc #$00			adc #$00
+.244c		9d 71 2a	sta $2a71,x			sta candy_XHI,x
+.244f		bd 5d 2a	lda $2a5d,x			lda candy_XLO,x 						;take candy out of the game if off the board
+.2452		c9 60		cmp #$60			cmp #$60
+.2454		90 0d		bcc $2463			bcc cCollision
+.2456		bd 71 2a	lda $2a71,x			lda candy_XHI,x
+.2459		f0 08		beq $2463			beq cCollision
+.245b		a9 ff		lda #$ff			lda #$ff
+.245d		9d 49 2a	sta $2a49,x			sta candy_Flag,x
+.2460		4c 37 25	jmp $2537	nt:		jmp nextThrow
+.2463						cCollision:
+.2463		a0 00		ldy #$00			ldy #$00
+.2465						collision:
+.2465		bd 5d 2a	lda $2a5d,x			lda candy_XLO,x
+.2468		d9 35 29	cmp $2935,y			cmp kids_XLO,y
+.246b		90 17		bcc $2484			bcc nextKid
+.246d		bd 71 2a	lda $2a71,x			lda candy_XHI,x
+.2470		d9 49 29	cmp $2949,y			cmp kids_XHI,y
+.2473		d0 0f		bne $2484			bne nextKid
+.2475		bd 85 2a	lda $2a85,x			lda candy_YLO,x
+.2478		d9 5d 29	cmp $295d,y			cmp kids_YLO,y
+.247b		d0 07		bne $2484			bne nextKid
+.247d		b9 71 29	lda $2971,y			lda kids_Treat,y
+.2480		d0 02		bne $2484			bne nextKid
+.2482		80 08		bra $248c			bra hit
+.2484						nextKid:
+.2484		c8		iny				iny
+.2485		c0 15		cpy #$15			cpy #21
+.2487		d0 dc		bne $2465			bne collision
+.2489		4c fb 24	jmp $24fb			jmp draWThrow
+.248c						hit:
+.248c		a9 01		lda #$01			lda #$01
+.248e		99 71 29	sta $2971,y			sta kids_Treat,y
+.2491		a9 38		lda #$38			lda #$38
+.2493		9d 5d 2a	sta $2a5d,x			sta candy_XLO,x						; X position of candy LO
+.2496		a9 00		lda #$00			lda #$00
+.2498		9d 71 2a	sta $2a71,x			sta candy_XHI,x 					; X position of candy HI
+.249b		a9 15		lda #$15			lda #21
+.249d		9d 49 2a	sta $2a49,x			sta candy_Flag,x					; current state (on steps)
+.24a0		bd 99 2a	lda $2a99,x			lda candy_Home,x					; home position of candy
+.24a3		9d 85 2a	sta $2a85,x			sta candy_YLO,x						; current y pos of candy
+.24a6		f8		sed				sed
+.24a7		18		clc				clc
+.24a8		ad ec 28	lda $28ec			lda happyKids
+.24ab		69 01		adc #$01			adc #$01
+.24ad		8d ec 28	sta $28ec			sta happyKids
+.24b0		ad ed 28	lda $28ed			lda happyKids+1
+.24b3		69 00		adc #$00			adc #$00
+.24b5		8d ed 28	sta $28ed			sta happyKids+1
+.24b8		86 80		stx $80				stx $80
+.24ba		ae f0 28	ldx $28f0			ldx level
+.24bd		18		clc				clc
+.24be		ad ee 28	lda $28ee			lda score
+.24c1		7d 24 2b	adc $2b24,x			adc levelScoring,x
+.24c4		8d ee 28	sta $28ee			sta score
+.24c7		ad ef 28	lda $28ef			lda score+1
+.24ca		69 00		adc #$00			adc #$00
+.24cc		8d ef 28	sta $28ef			sta score+1
+.24cf		d8		cld				cld
+.24d0		18		clc				clc
+.24d1		ad 1c 29	lda $291c			lda happyKidsHex
+.24d4		69 01		adc #$01			adc #$01
+.24d6		8d 1c 29	sta $291c			sta happyKidsHex
+.24d9		ad 1d 29	lda $291d			lda happyKidsHex+1
+.24dc		69 00		adc #$00			adc #$00
+.24de		8d 1d 29	sta $291d			sta happyKidsHex+1
+.24e1		bd 1e 2b	lda $2b1e,x			lda levelAdvance,x
+.24e4		cd 1c 29	cmp $291c			cmp happyKidsHex
+.24e7		d0 10		bne $24f9			bne keepLevel
+.24e9		ee 1e 29	inc $291e			inc levelUpFlag
+.24ec		ee f0 28	inc $28f0			inc level
+.24ef		ad f0 28	lda $28f0			lda level
+.24f2		c9 06		cmp #$06			cmp #$06
+.24f4		d0 03		bne $24f9			bne keepLevel
+.24f6		ce f0 28	dec $28f0			dec level
+.24f9						keepLevel:
+.24f9		a6 80		ldx $80				ldx $80
+.24fb						draWThrow:
+.24fb		bd ad 2a	lda $2aad,x			lda candy_SP_Reg,x					; sprite register LO
+.24fe		85 38		sta $38				sta $38								; store for y indexing
+.2500		a9 da		lda #$da			lda #$da							; sprite register HI
+.2502		85 39		sta $39				sta $39 							; store for y indexing
+.2504		a0 00		ldy #$00			ldy #$00
+.2506		a9 11		lda #$11			lda #$11							; Set sprite on
 .2508		c8		iny				iny
-.2509		a9 01		lda #$01			lda #$01							; set data Address HI
-.250b		91 38		sta ($38),y			sta ($38),y
-.250d		c8		iny				iny
-.250e		bd 4c 2a	lda $2a4c,x			lda candy_XLO,x 					; set X POS LO
-.2511		91 38		sta ($38),y			sta ($38),y
-.2513		c8		iny				iny
-.2514		bd 60 2a	lda $2a60,x			lda candy_XHI,x						; set X POS HI
-.2517		91 38		sta ($38),y			sta ($38),y
+.2509		da		phx				phx
+.250a		8a		txa				txa
+.250b		0a		asl a				asl
+.250c		aa		tax				tax
+.250d		bd c1 2a	lda $2ac1,x			lda candyOrder,x					; set data address LO
+.2510		91 38		sta ($38),y			sta ($38),y
+.2512		c8		iny				iny
+.2513		bd c2 2a	lda $2ac2,x			lda candyOrder+1,x					; set data address MED
+.2516		91 38		sta ($38),y			sta ($38),y
+.2518		fa		plx				plx
 .2519		c8		iny				iny
-.251a		bd 74 2a	lda $2a74,x			lda candy_YLO,x						; set Y POS LO
-.251d		91 38		sta ($38),y			sta ($38),y
-.251f		c8		iny				iny
-.2520		a9 00		lda #$00			lda #$00							; set Y POS HI
+.251a		a9 01		lda #$01			lda #$01							; set data Address HI
+.251c		91 38		sta ($38),y			sta ($38),y
+.251e		c8		iny				iny
+.251f		bd 5d 2a	lda $2a5d,x			lda candy_XLO,x 					; set X POS LO
 .2522		91 38		sta ($38),y			sta ($38),y
-.2524		80 00		bra $2526			bra nextThrow
-.2526						nextThrow:
-.2526		e8		inx				inx
-.2527		e0 14		cpx #$14			cpx #20
-.2529		f0 03		beq $252e			beq throwDone
-.252b		4c 26 24	jmp $2426			jmp tLoop
-.252e						throwDone:
-.252e		60		rts				rts
-.252f						walkers:
-.252f		a2 00		ldx #$00			ldx #00								; there are 20 walkers, This loop deals with each of them one at a time
-.2531						_walker_loop:
-.2531		bd 10 29	lda $2910,x			lda kids_Flag,x						; is the flag on - check to see if this walker is activated, not all walkers are on all the time
-.2534		d0 03		bne $2539			bne _checkTimer						; yes
-.2536		4c 22 26	jmp $2622			jmp _skipWalker
-.2539						_checkTimer:
-.2539		bd 88 29	lda $2988,x			lda kids_Count,x					; This checks a countdown timer - we're using SOF as a clock and movement is based on multiple counts of the clock
-.253c		f0 06		beq $2544			beq _move_walker					; once the countdown reaches zero, we take a step
-.253e		de 88 29	dec $2988,x			dec kids_Count,x					; if not, we reduce the counter by one, save the data and move on to the next walker
-.2541		4c 22 26	jmp $2622			jmp _skipWalker
-.2544						_move_walker:
-.2544		bd 60 29	lda $2960,x			lda kids_Treat,x					; This checks to see if the walker has a treat already. This makes the walker head back off the screen to the right
-.2547		d0 7f		bne $25c8			bne _exitPath						; the walker will also not accespt anymore candy
-.2549		bd 74 29	lda $2974,x			lda kids_Speed,x					; this resets the counter for timing - $27 is the hard number and $28 countdowns from the number
-.254c		9d 88 29	sta $2988,x			sta kids_Count,x					; this resets it after a step has been taken
-.254f		38		sec				sec
-.2550		bd 24 29	lda $2924,x			lda kids_XLO,x						; $23 and $24 are the LO/HI X location for the walker
-.2553		e9 01		sbc #$01			sbc #$01							; since we are going left, we are subtracting 1 pixel when taking a step
-.2555		9d 24 29	sta $2924,x			sta kids_XLO,x
-.2558		bd 38 29	lda $2938,x			lda kids_XHI,x
-.255b		e9 00		sbc #$00			sbc #$00
-.255d		9d 38 29	sta $2938,x			sta kids_XHI,x
-.2560		fe b0 29	inc $29b0,x			inc kids_SP_Step,x					; $2b is the step counter to point to the proper walking sprite for the walker
-.2563		18		clc				clc
-.2564		bd b0 29	lda $29b0,x			lda kids_SP_Step,x					; we load up $2b and and it with $03 because there are only 4 sprites for the walker stride
-.2567		29 03		and #$03			and #$03
-.2569		7d 9c 29	adc $299c,x			adc kids_SP,x						; then we add it to the character base (witch, reaper, vampire, lady vampire, ghost, Jack )
-.256c		0a		asl a				asl									; we then multiply by two because we are looking up a 16 bit address
-.256d		a8		tay				tay									; transfer to y to look up on our lookup table
-.256e		b9 d8 29	lda $29d8,y			lda charTable,y
-.2571		85 2e		sta $2e				sta $2e								; and save to zero page for indirect indexing
-.2573		b9 d9 29	lda $29d9,y			lda charTable+1,y
-.2576		85 2f		sta $2f				sta $2f
-.2578		20 92 25	jsr $2592			jsr _writeSpriteData				; write the data to the sprite registers
-.257b		bd 24 29	lda $2924,x			lda kids_XLO,x						; check if we hit the wall
-.257e		c9 5b		cmp #$5b			cmp #$5b
-.2580		d0 0d		bne $258f			bne _noSwitchBack
-.2582		bd 38 29	lda $2938,x			lda kids_XHI,x
-.2585		d0 08		bne $258f			bne _noSwitchBack
-.2587		a9 01		lda #$01			lda #$01
-.2589		9d 60 29	sta $2960,x			sta kids_Treat,x
-.258c		9c d9 28	stz $28d9			stz gameOn
-.258f						_noSwitchBack:
-.258f		4c 22 26	jmp $2622			jmp _skipWalker
-.2592						_writeSpriteData:
-.2592		bd c4 29	lda $29c4,x			lda kids_SP_Reg,x
-.2595		85 2c		sta $2c				sta $2c
-.2597		a9 d9		lda #$d9			lda #$d9
-.2599		85 2d		sta $2d				sta $2d
-.259b		a0 00		ldy #$00			ldy #$00							; now we are writing our new information to the sprite register
-.259d		a9 11		lda #$11			lda #$11							; starting with the enable/layer byte
-.259f		91 2c		sta ($2c),y			sta ($2c),y
-.25a1		c8		iny				iny
-.25a2		a5 2e		lda $2e				lda $2e
-.25a4		91 2c		sta ($2c),y			sta ($2c),y							; sprite definition address LO
-.25a6		c8		iny				iny
-.25a7		a5 2f		lda $2f				lda $2f
-.25a9		91 2c		sta ($2c),y			sta ($2c),y							; sprite definition address MID
-.25ab		c8		iny				iny
-.25ac		a9 02		lda #$02			lda #$02
-.25ae		91 2c		sta ($2c),y			sta ($2c),y							; sprite definition address HI
-.25b0		c8		iny				iny
-.25b1		bd 24 29	lda $2924,x			lda kids_XLO,x
-.25b4		91 2c		sta ($2c),y			sta ($2c),y							; X location LO
-.25b6		c8		iny				iny
-.25b7		bd 38 29	lda $2938,x			lda kids_XHI,x
-.25ba		91 2c		sta ($2c),y			sta ($2c),y							; x location HI
+.2524		c8		iny				iny
+.2525		bd 71 2a	lda $2a71,x			lda candy_XHI,x						; set X POS HI
+.2528		91 38		sta ($38),y			sta ($38),y
+.252a		c8		iny				iny
+.252b		bd 85 2a	lda $2a85,x			lda candy_YLO,x						; set Y POS LO
+.252e		91 38		sta ($38),y			sta ($38),y
+.2530		c8		iny				iny
+.2531		a9 00		lda #$00			lda #$00							; set Y POS HI
+.2533		91 38		sta ($38),y			sta ($38),y
+.2535		80 00		bra $2537			bra nextThrow
+.2537						nextThrow:
+.2537		e8		inx				inx
+.2538		e0 14		cpx #$14			cpx #20
+.253a		f0 03		beq $253f			beq throwDone
+.253c		4c 37 24	jmp $2437			jmp tLoop
+.253f						throwDone:
+.253f		60		rts				rts
+.2540						walkers:
+.2540		a2 00		ldx #$00			ldx #00								; there are 20 walkers, This loop deals with each of them one at a time
+.2542						_walker_loop:
+.2542		bd 21 29	lda $2921,x			lda kids_Flag,x						; is the flag on - check to see if this walker is activated, not all walkers are on all the time
+.2545		d0 03		bne $254a			bne _checkTimer						; yes
+.2547		4c 33 26	jmp $2633			jmp _skipWalker
+.254a						_checkTimer:
+.254a		bd 99 29	lda $2999,x			lda kids_Count,x					; This checks a countdown timer - we're using SOF as a clock and movement is based on multiple counts of the clock
+.254d		f0 06		beq $2555			beq _move_walker					; once the countdown reaches zero, we take a step
+.254f		de 99 29	dec $2999,x			dec kids_Count,x					; if not, we reduce the counter by one, save the data and move on to the next walker
+.2552		4c 33 26	jmp $2633			jmp _skipWalker
+.2555						_move_walker:
+.2555		bd 71 29	lda $2971,x			lda kids_Treat,x					; This checks to see if the walker has a treat already. This makes the walker head back off the screen to the right
+.2558		d0 7f		bne $25d9			bne _exitPath						; the walker will also not accespt anymore candy
+.255a		bd 85 29	lda $2985,x			lda kids_Speed,x					; this resets the counter for timing - $27 is the hard number and $28 countdowns from the number
+.255d		9d 99 29	sta $2999,x			sta kids_Count,x					; this resets it after a step has been taken
+.2560		38		sec				sec
+.2561		bd 35 29	lda $2935,x			lda kids_XLO,x						; $23 and $24 are the LO/HI X location for the walker
+.2564		e9 01		sbc #$01			sbc #$01							; since we are going left, we are subtracting 1 pixel when taking a step
+.2566		9d 35 29	sta $2935,x			sta kids_XLO,x
+.2569		bd 49 29	lda $2949,x			lda kids_XHI,x
+.256c		e9 00		sbc #$00			sbc #$00
+.256e		9d 49 29	sta $2949,x			sta kids_XHI,x
+.2571		fe c1 29	inc $29c1,x			inc kids_SP_Step,x					; $2b is the step counter to point to the proper walking sprite for the walker
+.2574		18		clc				clc
+.2575		bd c1 29	lda $29c1,x			lda kids_SP_Step,x					; we load up $2b and and it with $03 because there are only 4 sprites for the walker stride
+.2578		29 03		and #$03			and #$03
+.257a		7d ad 29	adc $29ad,x			adc kids_SP,x						; then we add it to the character base (witch, reaper, vampire, lady vampire, ghost, Jack )
+.257d		0a		asl a				asl									; we then multiply by two because we are looking up a 16 bit address
+.257e		a8		tay				tay									; transfer to y to look up on our lookup table
+.257f		b9 e9 29	lda $29e9,y			lda charTable,y
+.2582		85 2e		sta $2e				sta $2e								; and save to zero page for indirect indexing
+.2584		b9 ea 29	lda $29ea,y			lda charTable+1,y
+.2587		85 2f		sta $2f				sta $2f
+.2589		20 a3 25	jsr $25a3			jsr _writeSpriteData				; write the data to the sprite registers
+.258c		bd 35 29	lda $2935,x			lda kids_XLO,x						; check if we hit the wall
+.258f		c9 5b		cmp #$5b			cmp #$5b
+.2591		d0 0d		bne $25a0			bne _noSwitchBack
+.2593		bd 49 29	lda $2949,x			lda kids_XHI,x
+.2596		d0 08		bne $25a0			bne _noSwitchBack
+.2598		a9 01		lda #$01			lda #$01
+.259a		9d 71 29	sta $2971,x			sta kids_Treat,x
+.259d		9c ea 28	stz $28ea			stz gameOn
+.25a0						_noSwitchBack:
+.25a0		4c 33 26	jmp $2633			jmp _skipWalker
+.25a3						_writeSpriteData:
+.25a3		bd d5 29	lda $29d5,x			lda kids_SP_Reg,x
+.25a6		85 2c		sta $2c				sta $2c
+.25a8		a9 d9		lda #$d9			lda #$d9
+.25aa		85 2d		sta $2d				sta $2d
+.25ac		a0 00		ldy #$00			ldy #$00							; now we are writing our new information to the sprite register
+.25ae		a9 11		lda #$11			lda #$11							; starting with the enable/layer byte
+.25b0		91 2c		sta ($2c),y			sta ($2c),y
+.25b2		c8		iny				iny
+.25b3		a5 2e		lda $2e				lda $2e
+.25b5		91 2c		sta ($2c),y			sta ($2c),y							; sprite definition address LO
+.25b7		c8		iny				iny
+.25b8		a5 2f		lda $2f				lda $2f
+.25ba		91 2c		sta ($2c),y			sta ($2c),y							; sprite definition address MID
 .25bc		c8		iny				iny
-.25bd		bd 4c 29	lda $294c,x			lda kids_YLO,x
-.25c0		91 2c		sta ($2c),y			sta ($2c),y							; y location LO
-.25c2		c8		iny				iny
-.25c3		a9 00		lda #$00			lda #$00
-.25c5		91 2c		sta ($2c),y			sta ($2c),y							; y location HI
-.25c7		60		rts				rts
-.25c8						_exitPath:
-.25c8		a9 00		lda #$00			lda #$00 							; this resets the counter for timing - After getting candy the walker runs out
-.25ca		9d 88 29	sta $2988,x			sta kids_Count,x					; this resets it after a step has been taken
-.25cd		18		clc				clc
-.25ce		bd 24 29	lda $2924,x			lda kids_XLO,x						; $23 and $24 are the LO/HI X location for the walker
-.25d1		69 01		adc #$01			adc #$01							; since we are going right, we are adding 1 pixel when taking a step
-.25d3		9d 24 29	sta $2924,x			sta kids_XLO,x
-.25d6		bd 38 29	lda $2938,x			lda kids_XHI,x
-.25d9		69 00		adc #$00			adc #$00
-.25db		9d 38 29	sta $2938,x			sta kids_XHI,x
-.25de		de b0 29	dec $29b0,x			dec kids_SP_Step,x					; $2b is the step counter to point to the proper walking sprite for the walker
-.25e1		18		clc				clc
-.25e2		bd b0 29	lda $29b0,x			lda kids_SP_Step,x					; we load up $2b and and it with $03 because there are only 4 sprites for the walker stride
-.25e5		29 03		and #$03			and #$03
-.25e7		7d 9c 29	adc $299c,x			adc kids_SP,x						; then we add it to the character base (witch, reaper, vampire, lady vampire, ghost, Jack )
-.25ea		0a		asl a				asl									; we then multiply by two because we are looking up a 16 bit address
-.25eb		a8		tay				tay									; transfer to y to look up on our lookup table
-.25ec		b9 08 2a	lda $2a08,y			lda charTable2,y
-.25ef		85 2e		sta $2e				sta $2e								; and save to zero page for indirect indexing
-.25f1		b9 09 2a	lda $2a09,y			lda charTable2+1,y
-.25f4		85 2f		sta $2f				sta $2f
-.25f6		20 92 25	jsr $2592			jsr _writeSpriteData				; write the data to the sprite registers
-.25f9		bd 24 29	lda $2924,x			lda kids_XLO,x						; check if we walk off right
-.25fc		c9 61		cmp #$61			cmp #$61
-.25fe		d0 22		bne $2622			bne _stillOn
-.2600		bd 38 29	lda $2938,x			lda kids_XHI,x
-.2603		f0 1d		beq $2622			beq _stillOn
-.2605		a9 00		lda #$00			lda #$00
-.2607		9d 60 29	sta $2960,x			sta kids_Treat,x
-.260a		ad a4 d6	lda $d6a4			lda Random_L
-.260d		29 03		and #$03			and #$03
-.260f		18		clc				clc
-.2610		6d 0e 29	adc $290e			adc speed
-.2613		9d 74 29	sta $2974,x			sta kids_Speed,x
-.2616		ad a4 d6	lda $d6a4			lda Random_L
-.2619		29 03		and #$03			and #$03
-.261b		a8		tay				tay
-.261c		b9 df 2a	lda $2adf,y			lda playerPosTable,y
-.261f		9d 4c 29	sta $294c,x			sta kids_YLO,x
-.2622						_stillOn:
-.2622						_skipWalker:
-.2622		e8		inx				inx									; increment x to the next walker
-.2623		e0 14		cpx #$14			cpx #20								; have we done all twenty
-.2625		f0 03		beq $262a			beq _done							; yes - we are done
-.2627		4c 31 25	jmp $2531			jmp _walker_loop					; using a jmp because it is too far for a branching command
-.262a						_done:
-.262a		60		rts				rts									; we are done with all walkers, return
-.262b						moonrise:
-.262b		ad f9 2a	lda $2af9			lda moonXCount
-.262e		d0 1e		bne $264e			bne checkMoonY
-.2630		38		sec				sec
-.2631		ad f5 2a	lda $2af5			lda moonXLO
-.2634		e9 01		sbc #$01			sbc #$01
-.2636		8d f5 2a	sta $2af5			sta moonXLO
-.2639		8d a4 da	sta $daa4			sta $daa4
-.263c		ad f6 2a	lda $2af6			lda moonXHI
-.263f		e9 00		sbc #$00			sbc #$00
-.2641		8d f6 2a	sta $2af6			sta moonXHI
-.2644		8d a5 da	sta $daa5			sta $daa5
-.2647		30 20		bmi $2669			bmi resetMoon
-.2649		a9 80		lda #$80			lda #$80
-.264b		8d f9 2a	sta $2af9			sta moonXCount
-.264e						checkMoonY:
-.264e		ce f9 2a	dec $2af9			dec moonXCount
-.2651		ad fb 2a	lda $2afb			lda moonyCountHI
-.2654		d0 2b		bne $2681			bne doneMoon
-.2656		38		sec				sec
-.2657		ad f7 2a	lda $2af7			lda moonYLO
-.265a		e9 01		sbc #$01			sbc #$01
-.265c		8d f7 2a	sta $2af7			sta moonYLO
-.265f		8d a6 da	sta $daa6			sta $daa6
-.2662		a9 06		lda #$06			lda #$06
-.2664		8d fb 2a	sta $2afb			sta moonyCountHI
-.2667		80 18		bra $2681			bra doneMoon
-.2669						resetMoon:
-.2669		a9 60		lda #$60			lda #$60
-.266b		8d a4 da	sta $daa4			sta $daa4
-.266e		8d f5 2a	sta $2af5			sta moonXLO
-.2671		a9 01		lda #$01			lda #$01
-.2673		8d a5 da	sta $daa5			sta $daa5
-.2676		8d f6 2a	sta $2af6			sta moonXHI
-.2679		a9 32		lda #$32			lda #$32
-.267b		8d a6 da	sta $daa6			sta $daa6
-.267e		8d f7 2a	sta $2af7			sta moonYLO
-.2681						doneMoon:
-.2681		38		sec				sec
-.2682		ad fa 2a	lda $2afa			lda moonyCount
-.2685		e9 01		sbc #$01			sbc #$01
-.2687		8d fa 2a	sta $2afa			sta moonyCount
-.268a		ad fb 2a	lda $2afb			lda moonyCountHI
-.268d		e9 00		sbc #$00			sbc #$00
-.268f		8d fb 2a	sta $2afb			sta moonyCountHI
-.2692		60		rts				rts
-.2693						SetTimer:
-.2693		e6 d0		inc $d0				inc $d0
-.2695		a5 d0		lda $d0				lda $d0
-.2697		85 f4		sta $f4				sta kernel.args.timer.absolute		; store in timer.absolute paramter
-.2699		85 f5		sta $f5				sta kernel.args.timer.cookie		; saved as a cookie to the kernel (same as frame number)
-.269b		a9 00		lda #$00			lda #kernel.args.timer.FRAMES		; set the Timer to Frames
-.269d		85 f3		sta $f3				sta kernel.args.timer.units			; store in units parameter
-.269f		20 f0 ff	jsr $fff0			jsr kernel.Clock.SetTimer			; jsr to Kernel routine to set timer
-.26a2		60		rts				rts
-.26a3						clearTextScreen:
-.26a3		a9 02		lda #$02			lda #$02							; need to be in the right IO output to write to screen
-.26a5		85 01		sta $01				sta MMU_IO_CTRL
-.26a7		a2 00		ldx #$00			ldx #$00							; set x to zero, we'll go once around all 256 bytes
-.26a9						loopClearText:
-.26a9		a9 20		lda #$20			lda #$20							; the space character
-.26ab		9d 00 c0	sta $c000,x			sta $c000,x 						; store it in all the screen locations
-.26ae		9d 00 c1	sta $c100,x			sta $c100,x
-.26b1		9d 00 c2	sta $c200,x			sta $c200,x
-.26b4		9d 00 c3	sta $c300,x			sta $c300,x
-.26b7		9d 00 c4	sta $c400,x			sta $c400,x
-.26ba		9d 00 c5	sta $c500,x			sta $c500,x
-.26bd		9d 00 c6	sta $c600,x			sta $c600,x
-.26c0		9d 00 c7	sta $c700,x			sta $c700,x
-.26c3		9d 00 c8	sta $c800,x			sta $c800,x
-.26c6		9d 00 c9	sta $c900,x			sta $c900,x
-.26c9		9d 00 ca	sta $ca00,x			sta $ca00,x
-.26cc		9d 00 cb	sta $cb00,x			sta $cb00,x
-.26cf		9d 00 cc	sta $cc00,x			sta $cc00,x
-.26d2		9d 00 cd	sta $cd00,x			sta $cd00,x
-.26d5		9d 00 ce	sta $ce00,x			sta $ce00,x
-.26d8		9d 00 cd	sta $cd00,x			sta $cd00,x
-.26db		9d 00 ce	sta $ce00,x			sta $ce00,x
-.26de		9d 00 cf	sta $cf00,x			sta $cf00,x
-.26e1		9d 00 d0	sta $d000,x			sta $d000,x
-.26e4		9d 00 d1	sta $d100,x			sta $d100,x
-.26e7		9d c0 d1	sta $d1c0,x			sta $d1c0,x 						; this last group is not a full 256 bytes so there's some overlap
-.26ea		e8		inx				inx									; increment x
-.26eb		d0 bc		bne $26a9			bne loopClearText					; if we haven't looped all the way around to zero, keep looping
-.26ed		64 01		stz $01				stz MMU_IO_CTRL						; reset io control back to zero
-.26ef		60		rts				rts
-.26f0						checkLevelUp:
-.26f0		ad 0d 29	lda $290d			lda levelUpFlag
-.26f3		f0 2c		beq $2721			beq checkLevelDone
-.26f5		9c 0d 29	stz $290d			stz levelUpFlag
-.26f8		ae df 28	ldx $28df			ldx level
-.26fb		bd 01 2b	lda $2b01,x			lda levelCandy,x
-.26fe		aa		tax				tax
-.26ff						reduceCandy:
-.26ff		a9 ff		lda #$ff			lda #$ff
-.2701		9d 38 2a	sta $2a38,x			sta candy_Flag,x
-.2704		bd 9c 2a	lda $2a9c,x			lda candy_SP_Reg,x					; sprite register LO
-.2707		85 30		sta $30				sta $30								; store for y indexing
-.2709		a9 da		lda #$da			lda #$da							; sprite register HI
-.270b		85 31		sta $31				sta $31 							; store for y indexing
-.270d		a0 00		ldy #$00			ldy #$00
-.270f		a9 00		lda #$00			lda #$00
-.2711		91 30		sta ($30),y			sta ($30),y
-.2713		ca		dex				dex
-.2714		e0 ff		cpx #$ff			cpx #$ff
-.2716		d0 e7		bne $26ff			bne reduceCandy
-.2718						adjustSpeed:
-.2718		ae df 28	ldx $28df			ldx level
-.271b		bd 07 2b	lda $2b07,x			lda levelSpeed,x
-.271e		8d 0e 29	sta $290e			sta speed
-.2721						checkLevelDone:
-.2721		60		rts				rts
-.2722						scoring:
-.2722		a9 02		lda #$02			lda #$02
-.2724		85 01		sta $01				sta MMU_IO_CTRL
-.2726		ad de 28	lda $28de			lda score+1
-.2729		4a		lsr a				lsr
-.272a		4a		lsr a				lsr
-.272b		4a		lsr a				lsr
-.272c		4a		lsr a				lsr
-.272d		aa		tax				tax
-.272e		bd e0 28	lda $28e0,x			lda numbers,x
-.2731		8d 26 c0	sta $c026			sta $c026
-.2734		ad de 28	lda $28de			lda score+1
-.2737		29 0f		and #$0f			and #$0f
-.2739		aa		tax				tax
-.273a		bd e0 28	lda $28e0,x			lda numbers,x
-.273d		8d 27 c0	sta $c027			sta $c027
-.2740		ad dd 28	lda $28dd			lda score
-.2743		4a		lsr a				lsr
-.2744		4a		lsr a				lsr
-.2745		4a		lsr a				lsr
-.2746		4a		lsr a				lsr
-.2747		aa		tax				tax
-.2748		bd e0 28	lda $28e0,x			lda numbers,x
-.274b		8d 28 c0	sta $c028			sta $c028
-.274e		ad dd 28	lda $28dd			lda score
-.2751		29 0f		and #$0f			and #$0f
-.2753		aa		tax				tax
-.2754		bd e0 28	lda $28e0,x			lda numbers,x
-.2757		8d 29 c0	sta $c029			sta $c029
-.275a		ad dc 28	lda $28dc			lda happyKids+1
-.275d		4a		lsr a				lsr
-.275e		4a		lsr a				lsr
-.275f		4a		lsr a				lsr
-.2760		4a		lsr a				lsr
-.2761		aa		tax				tax
-.2762		bd e0 28	lda $28e0,x			lda numbers,x
-.2765		8d 43 c0	sta $c043			sta $c043
-.2768		ad dc 28	lda $28dc			lda happyKids+1
-.276b		29 0f		and #$0f			and #$0f
-.276d		aa		tax				tax
-.276e		bd e0 28	lda $28e0,x			lda numbers,x
-.2771		8d 44 c0	sta $c044			sta $c044
-.2774		ad db 28	lda $28db			lda happyKids
-.2777		4a		lsr a				lsr
-.2778		4a		lsr a				lsr
-.2779		4a		lsr a				lsr
-.277a		4a		lsr a				lsr
-.277b		aa		tax				tax
-.277c		bd e0 28	lda $28e0,x			lda numbers,x
-.277f		8d 45 c0	sta $c045			sta $c045
-.2782		ad db 28	lda $28db			lda happyKids
-.2785		29 0f		and #$0f			and #$0f
-.2787		aa		tax				tax
-.2788		bd e0 28	lda $28e0,x			lda numbers,x
-.278b		8d 46 c0	sta $c046			sta $c046
-.278e		ad df 28	lda $28df			lda level
-.2791		29 0f		and #$0f			and #$0f
-.2793		aa		tax				tax
-.2794		bd e0 28	lda $28e0,x			lda numbers,x
-.2797		8d 10 c0	sta $c010			sta $c010
-.279a		a2 00		ldx #$00			ldx #$00
-.279c						writeText:
-.279c		bd ea 28	lda $28ea,x			lda textScore,x
-.279f		9d 1a c0	sta $c01a,x			sta $c01a,x
-.27a2		bd f5 28	lda $28f5,x			lda textKids,x
-.27a5		9d 38 c0	sta $c038,x			sta $c038,x
-.27a8		bd 00 29	lda $2900,x			lda textLevel,x
-.27ab		9d 05 c0	sta $c005,x			sta $c005,x
-.27ae		e8		inx				inx
-.27af		e0 0b		cpx #$0b			cpx #$0b
-.27b1		90 e9		bcc $279c			bcc writeText
-.27b3		64 01		stz $01				stz MMU_IO_CTRL
-.27b5		60		rts				rts
+.25bd		a9 02		lda #$02			lda #$02
+.25bf		91 2c		sta ($2c),y			sta ($2c),y							; sprite definition address HI
+.25c1		c8		iny				iny
+.25c2		bd 35 29	lda $2935,x			lda kids_XLO,x
+.25c5		91 2c		sta ($2c),y			sta ($2c),y							; X location LO
+.25c7		c8		iny				iny
+.25c8		bd 49 29	lda $2949,x			lda kids_XHI,x
+.25cb		91 2c		sta ($2c),y			sta ($2c),y							; x location HI
+.25cd		c8		iny				iny
+.25ce		bd 5d 29	lda $295d,x			lda kids_YLO,x
+.25d1		91 2c		sta ($2c),y			sta ($2c),y							; y location LO
+.25d3		c8		iny				iny
+.25d4		a9 00		lda #$00			lda #$00
+.25d6		91 2c		sta ($2c),y			sta ($2c),y							; y location HI
+.25d8		60		rts				rts
+.25d9						_exitPath:
+.25d9		a9 00		lda #$00			lda #$00 							; this resets the counter for timing - After getting candy the walker runs out
+.25db		9d 99 29	sta $2999,x			sta kids_Count,x					; this resets it after a step has been taken
+.25de		18		clc				clc
+.25df		bd 35 29	lda $2935,x			lda kids_XLO,x						; $23 and $24 are the LO/HI X location for the walker
+.25e2		69 01		adc #$01			adc #$01							; since we are going right, we are adding 1 pixel when taking a step
+.25e4		9d 35 29	sta $2935,x			sta kids_XLO,x
+.25e7		bd 49 29	lda $2949,x			lda kids_XHI,x
+.25ea		69 00		adc #$00			adc #$00
+.25ec		9d 49 29	sta $2949,x			sta kids_XHI,x
+.25ef		de c1 29	dec $29c1,x			dec kids_SP_Step,x					; $2b is the step counter to point to the proper walking sprite for the walker
+.25f2		18		clc				clc
+.25f3		bd c1 29	lda $29c1,x			lda kids_SP_Step,x					; we load up $2b and and it with $03 because there are only 4 sprites for the walker stride
+.25f6		29 03		and #$03			and #$03
+.25f8		7d ad 29	adc $29ad,x			adc kids_SP,x						; then we add it to the character base (witch, reaper, vampire, lady vampire, ghost, Jack )
+.25fb		0a		asl a				asl									; we then multiply by two because we are looking up a 16 bit address
+.25fc		a8		tay				tay									; transfer to y to look up on our lookup table
+.25fd		b9 19 2a	lda $2a19,y			lda charTable2,y
+.2600		85 2e		sta $2e				sta $2e								; and save to zero page for indirect indexing
+.2602		b9 1a 2a	lda $2a1a,y			lda charTable2+1,y
+.2605		85 2f		sta $2f				sta $2f
+.2607		20 a3 25	jsr $25a3			jsr _writeSpriteData				; write the data to the sprite registers
+.260a		bd 35 29	lda $2935,x			lda kids_XLO,x						; check if we walk off right
+.260d		c9 61		cmp #$61			cmp #$61
+.260f		d0 22		bne $2633			bne _stillOn
+.2611		bd 49 29	lda $2949,x			lda kids_XHI,x
+.2614		f0 1d		beq $2633			beq _stillOn
+.2616		a9 00		lda #$00			lda #$00
+.2618		9d 71 29	sta $2971,x			sta kids_Treat,x
+.261b		ad a4 d6	lda $d6a4			lda Random_L
+.261e		29 03		and #$03			and #$03
+.2620		18		clc				clc
+.2621		6d 1f 29	adc $291f			adc speed
+.2624		9d 85 29	sta $2985,x			sta kids_Speed,x
+.2627		ad a4 d6	lda $d6a4			lda Random_L
+.262a		29 03		and #$03			and #$03
+.262c		a8		tay				tay
+.262d		b9 f0 2a	lda $2af0,y			lda playerPosTable,y
+.2630		9d 5d 29	sta $295d,x			sta kids_YLO,x
+.2633						_stillOn:
+.2633						_skipWalker:
+.2633		e8		inx				inx									; increment x to the next walker
+.2634		e0 14		cpx #$14			cpx #20								; have we done all twenty
+.2636		f0 03		beq $263b			beq _done							; yes - we are done
+.2638		4c 42 25	jmp $2542			jmp _walker_loop					; using a jmp because it is too far for a branching command
+.263b						_done:
+.263b		60		rts				rts									; we are done with all walkers, return
+.263c						moonrise:
+.263c		ad 0a 2b	lda $2b0a			lda moonXCount
+.263f		d0 1e		bne $265f			bne checkMoonY
+.2641		38		sec				sec
+.2642		ad 06 2b	lda $2b06			lda moonXLO
+.2645		e9 01		sbc #$01			sbc #$01
+.2647		8d 06 2b	sta $2b06			sta moonXLO
+.264a		8d a4 da	sta $daa4			sta $daa4
+.264d		ad 07 2b	lda $2b07			lda moonXHI
+.2650		e9 00		sbc #$00			sbc #$00
+.2652		8d 07 2b	sta $2b07			sta moonXHI
+.2655		8d a5 da	sta $daa5			sta $daa5
+.2658		30 20		bmi $267a			bmi resetMoon
+.265a		a9 80		lda #$80			lda #$80
+.265c		8d 0a 2b	sta $2b0a			sta moonXCount
+.265f						checkMoonY:
+.265f		ce 0a 2b	dec $2b0a			dec moonXCount
+.2662		ad 0c 2b	lda $2b0c			lda moonyCountHI
+.2665		d0 2b		bne $2692			bne doneMoon
+.2667		38		sec				sec
+.2668		ad 08 2b	lda $2b08			lda moonYLO
+.266b		e9 01		sbc #$01			sbc #$01
+.266d		8d 08 2b	sta $2b08			sta moonYLO
+.2670		8d a6 da	sta $daa6			sta $daa6
+.2673		a9 06		lda #$06			lda #$06
+.2675		8d 0c 2b	sta $2b0c			sta moonyCountHI
+.2678		80 18		bra $2692			bra doneMoon
+.267a						resetMoon:
+.267a		a9 60		lda #$60			lda #$60
+.267c		8d a4 da	sta $daa4			sta $daa4
+.267f		8d 06 2b	sta $2b06			sta moonXLO
+.2682		a9 01		lda #$01			lda #$01
+.2684		8d a5 da	sta $daa5			sta $daa5
+.2687		8d 07 2b	sta $2b07			sta moonXHI
+.268a		a9 32		lda #$32			lda #$32
+.268c		8d a6 da	sta $daa6			sta $daa6
+.268f		8d 08 2b	sta $2b08			sta moonYLO
+.2692						doneMoon:
+.2692		38		sec				sec
+.2693		ad 0b 2b	lda $2b0b			lda moonyCount
+.2696		e9 01		sbc #$01			sbc #$01
+.2698		8d 0b 2b	sta $2b0b			sta moonyCount
+.269b		ad 0c 2b	lda $2b0c			lda moonyCountHI
+.269e		e9 00		sbc #$00			sbc #$00
+.26a0		8d 0c 2b	sta $2b0c			sta moonyCountHI
+.26a3		60		rts				rts
+.26a4						SetTimer:
+.26a4		e6 d0		inc $d0				inc $d0
+.26a6		a5 d0		lda $d0				lda $d0
+.26a8		85 f4		sta $f4				sta kernel.args.timer.absolute		; store in timer.absolute paramter
+.26aa		85 f5		sta $f5				sta kernel.args.timer.cookie		; saved as a cookie to the kernel (same as frame number)
+.26ac		a9 00		lda #$00			lda #kernel.args.timer.FRAMES		; set the Timer to Frames
+.26ae		85 f3		sta $f3				sta kernel.args.timer.units			; store in units parameter
+.26b0		20 f0 ff	jsr $fff0			jsr kernel.Clock.SetTimer			; jsr to Kernel routine to set timer
+.26b3		60		rts				rts
+.26b4						clearTextScreen:
+.26b4		a9 02		lda #$02			lda #$02							; need to be in the right IO output to write to screen
+.26b6		85 01		sta $01				sta MMU_IO_CTRL
+.26b8		a2 00		ldx #$00			ldx #$00							; set x to zero, we'll go once around all 256 bytes
+.26ba						loopClearText:
+.26ba		a9 20		lda #$20			lda #$20							; the space character
+.26bc		9d 00 c0	sta $c000,x			sta $c000,x 						; store it in all the screen locations
+.26bf		9d 00 c1	sta $c100,x			sta $c100,x
+.26c2		9d 00 c2	sta $c200,x			sta $c200,x
+.26c5		9d 00 c3	sta $c300,x			sta $c300,x
+.26c8		9d 00 c4	sta $c400,x			sta $c400,x
+.26cb		9d 00 c5	sta $c500,x			sta $c500,x
+.26ce		9d 00 c6	sta $c600,x			sta $c600,x
+.26d1		9d 00 c7	sta $c700,x			sta $c700,x
+.26d4		9d 00 c8	sta $c800,x			sta $c800,x
+.26d7		9d 00 c9	sta $c900,x			sta $c900,x
+.26da		9d 00 ca	sta $ca00,x			sta $ca00,x
+.26dd		9d 00 cb	sta $cb00,x			sta $cb00,x
+.26e0		9d 00 cc	sta $cc00,x			sta $cc00,x
+.26e3		9d 00 cd	sta $cd00,x			sta $cd00,x
+.26e6		9d 00 ce	sta $ce00,x			sta $ce00,x
+.26e9		9d 00 cd	sta $cd00,x			sta $cd00,x
+.26ec		9d 00 ce	sta $ce00,x			sta $ce00,x
+.26ef		9d 00 cf	sta $cf00,x			sta $cf00,x
+.26f2		9d 00 d0	sta $d000,x			sta $d000,x
+.26f5		9d 00 d1	sta $d100,x			sta $d100,x
+.26f8		9d c0 d1	sta $d1c0,x			sta $d1c0,x 						; this last group is not a full 256 bytes so there's some overlap
+.26fb		e8		inx				inx									; increment x
+.26fc		d0 bc		bne $26ba			bne loopClearText					; if we haven't looped all the way around to zero, keep looping
+.26fe		64 01		stz $01				stz MMU_IO_CTRL						; reset io control back to zero
+.2700		60		rts				rts
+.2701						checkLevelUp:
+.2701		ad 1e 29	lda $291e			lda levelUpFlag
+.2704		f0 2c		beq $2732			beq checkLevelDone
+.2706		9c 1e 29	stz $291e			stz levelUpFlag
+.2709		ae f0 28	ldx $28f0			ldx level
+.270c		bd 12 2b	lda $2b12,x			lda levelCandy,x
+.270f		aa		tax				tax
+.2710						reduceCandy:
+.2710		a9 ff		lda #$ff			lda #$ff
+.2712		9d 49 2a	sta $2a49,x			sta candy_Flag,x
+.2715		bd ad 2a	lda $2aad,x			lda candy_SP_Reg,x					; sprite register LO
+.2718		85 30		sta $30				sta $30								; store for y indexing
+.271a		a9 da		lda #$da			lda #$da							; sprite register HI
+.271c		85 31		sta $31				sta $31 							; store for y indexing
+.271e		a0 00		ldy #$00			ldy #$00
+.2720		a9 00		lda #$00			lda #$00
+.2722		91 30		sta ($30),y			sta ($30),y
+.2724		ca		dex				dex
+.2725		e0 ff		cpx #$ff			cpx #$ff
+.2727		d0 e7		bne $2710			bne reduceCandy
+.2729						adjustSpeed:
+.2729		ae f0 28	ldx $28f0			ldx level
+.272c		bd 18 2b	lda $2b18,x			lda levelSpeed,x
+.272f		8d 1f 29	sta $291f			sta speed
+.2732						checkLevelDone:
+.2732		60		rts				rts
+.2733						scoring:
+.2733		a9 02		lda #$02			lda #$02
+.2735		85 01		sta $01				sta MMU_IO_CTRL
+.2737		ad ef 28	lda $28ef			lda score+1
+.273a		4a		lsr a				lsr
+.273b		4a		lsr a				lsr
+.273c		4a		lsr a				lsr
+.273d		4a		lsr a				lsr
+.273e		aa		tax				tax
+.273f		bd f1 28	lda $28f1,x			lda numbers,x
+.2742		8d 26 c0	sta $c026			sta $c026
+.2745		ad ef 28	lda $28ef			lda score+1
+.2748		29 0f		and #$0f			and #$0f
+.274a		aa		tax				tax
+.274b		bd f1 28	lda $28f1,x			lda numbers,x
+.274e		8d 27 c0	sta $c027			sta $c027
+.2751		ad ee 28	lda $28ee			lda score
+.2754		4a		lsr a				lsr
+.2755		4a		lsr a				lsr
+.2756		4a		lsr a				lsr
+.2757		4a		lsr a				lsr
+.2758		aa		tax				tax
+.2759		bd f1 28	lda $28f1,x			lda numbers,x
+.275c		8d 28 c0	sta $c028			sta $c028
+.275f		ad ee 28	lda $28ee			lda score
+.2762		29 0f		and #$0f			and #$0f
+.2764		aa		tax				tax
+.2765		bd f1 28	lda $28f1,x			lda numbers,x
+.2768		8d 29 c0	sta $c029			sta $c029
+.276b		ad ed 28	lda $28ed			lda happyKids+1
+.276e		4a		lsr a				lsr
+.276f		4a		lsr a				lsr
+.2770		4a		lsr a				lsr
+.2771		4a		lsr a				lsr
+.2772		aa		tax				tax
+.2773		bd f1 28	lda $28f1,x			lda numbers,x
+.2776		8d 43 c0	sta $c043			sta $c043
+.2779		ad ed 28	lda $28ed			lda happyKids+1
+.277c		29 0f		and #$0f			and #$0f
+.277e		aa		tax				tax
+.277f		bd f1 28	lda $28f1,x			lda numbers,x
+.2782		8d 44 c0	sta $c044			sta $c044
+.2785		ad ec 28	lda $28ec			lda happyKids
+.2788		4a		lsr a				lsr
+.2789		4a		lsr a				lsr
+.278a		4a		lsr a				lsr
+.278b		4a		lsr a				lsr
+.278c		aa		tax				tax
+.278d		bd f1 28	lda $28f1,x			lda numbers,x
+.2790		8d 45 c0	sta $c045			sta $c045
+.2793		ad ec 28	lda $28ec			lda happyKids
+.2796		29 0f		and #$0f			and #$0f
+.2798		aa		tax				tax
+.2799		bd f1 28	lda $28f1,x			lda numbers,x
+.279c		8d 46 c0	sta $c046			sta $c046
+.279f		ad f0 28	lda $28f0			lda level
+.27a2		29 0f		and #$0f			and #$0f
+.27a4		aa		tax				tax
+.27a5		bd f1 28	lda $28f1,x			lda numbers,x
+.27a8		8d 10 c0	sta $c010			sta $c010
+.27ab		a2 00		ldx #$00			ldx #$00
+.27ad						writeText:
+.27ad		bd fb 28	lda $28fb,x			lda textScore,x
+.27b0		9d 1a c0	sta $c01a,x			sta $c01a,x
+.27b3		bd 06 29	lda $2906,x			lda textKids,x
+.27b6		9d 38 c0	sta $c038,x			sta $c038,x
+.27b9		bd 11 29	lda $2911,x			lda textLevel,x
+.27bc		9d 05 c0	sta $c005,x			sta $c005,x
+.27bf		e8		inx				inx
+.27c0		e0 0b		cpx #$0b			cpx #$0b
+.27c2		90 e9		bcc $27ad			bcc writeText
+.27c4		64 01		stz $01				stz MMU_IO_CTRL
+.27c6		60		rts				rts
 
 ;******  Processing file: music_player.s
 
-.27b6						music:
-.27b6		ad da 28	lda $28da			lda musicOn
-.27b9		f0 0a		beq $27c5			beq noMusic
-.27bb		ee 30 09	inc $0930			inc mTimer							; increment the music timer
-.27be		ad 30 09	lda $0930			lda mTimer							; load and compare with set time
-.27c1		c9 0a		cmp #$0a			cmp #$0A 							; to determine if we should play the next note
-.27c3		f0 01		beq $27c6			beq playNotes
-.27c5						noMusic:
-.27c5		60		rts				rts
-.27c6						playNotes:
-.27c6		9c 30 09	stz $0930			stz mTimer						; reset the timer
-.27c9						nextNote:
-.27c9						VL1:
-.27c9		a0 00		ldy #$00			ldy #$00
-.27cb		b1 70		lda ($70),y			lda ($70),y
-.27cd		c9 aa		cmp #$aa			cmp #SK
-.27cf		f0 34		beq $2805			beq done1
-.27d1		c9 a8		cmp #$a8			cmp #RT
-.27d3		f0 16		beq $27eb			beq rest1
-.27d5		c9 ff		cmp #$ff			cmp #$ff
-.27d7		d0 17		bne $27f0			bne nextL1Note
-.27d9		a9 34		lda #$34			lda #<partA
-.27db		85 70		sta $70				sta $70
-.27dd		a9 09		lda #$09			lda #>partA
-.27df		85 71		sta $71				sta $71
-.27e1		ad d9 28	lda $28d9			lda gameOn
-.27e4		d0 e3		bne $27c9			bne VL1
-.27e6		9c da 28	stz $28da			stz musicOn
-.27e9		80 de		bra $27c9			bra VL1
-.27eb						rest1:
-.27eb		9c 04 d4	stz $d404			stz SID_L1_GATE
-.27ee		80 15		bra $2805			bra done1
-.27f0						nextL1Note:
-.27f0		aa		tax				tax								; transfer note to x for indexing
-.27f1		9c 04 d4	stz $d404			stz SID_L1_GATE					; close gate
-.27f4		bd 88 08	lda $0888,x			lda freq,x						; load the frequency lo from the table
-.27f7		8d 00 d4	sta $d400			sta SID_L1_FREQ_L				; store in register
-.27fa		bd 89 08	lda $0889,x			lda freq+1,x 					; load frequency hi from the table
-.27fd		8d 01 d4	sta $d401			sta SID_L1_FREQ_H				; store in the register
-.2800		a9 11		lda #$11			lda #waveType
-.2802		8d 04 d4	sta $d404			sta SID_L1_GATE
-.2805						done1:
-.2805		18		clc				clc
-.2806		a5 70		lda $70				lda $70
-.2808		69 01		adc #$01			adc #$01
-.280a		85 70		sta $70				sta $70
-.280c		a5 71		lda $71				lda $71
-.280e		69 00		adc #$00			adc #$00
-.2810		85 71		sta $71				sta $71
-.2812						VL2:
-.2812		a0 00		ldy #$00			ldy #$00
-.2814		b1 72		lda ($72),y			lda ($72),y
-.2816		c9 aa		cmp #$aa			cmp #SK
-.2818		f0 2c		beq $2846			beq done2
-.281a		c9 a8		cmp #$a8			cmp #RT
-.281c		f0 0e		beq $282c			beq rest2
-.281e		c9 ff		cmp #$ff			cmp #$ff
-.2820		d0 0f		bne $2831			bne nextL2Note
-.2822		a9 3d		lda #$3d			lda #<partB
-.2824		85 72		sta $72				sta $72
-.2826		a9 0c		lda #$0c			lda #>partB
-.2828		85 73		sta $73				sta $73
-.282a		80 e6		bra $2812			bra VL2
-.282c						rest2:
-.282c		9c 0b d4	stz $d40b			stz SID_L2_GATE
-.282f		80 15		bra $2846			bra done2
-.2831						nextL2Note:
-.2831		aa		tax				tax
-.2832		9c 0b d4	stz $d40b			stz SID_L2_GATE
-.2835		bd 88 08	lda $0888,x			lda freq,x
-.2838		8d 07 d4	sta $d407			sta SID_L2_FREQ_L
-.283b		bd 89 08	lda $0889,x			lda freq+1,x
-.283e		8d 08 d4	sta $d408			sta SID_L2_FREQ_H
-.2841		a9 11		lda #$11			lda #waveType
-.2843		8d 0b d4	sta $d40b			sta SID_L2_GATE
-.2846						done2:
-.2846		18		clc				clc
-.2847		a5 72		lda $72				lda $72
-.2849		69 01		adc #$01			adc #$01
-.284b		85 72		sta $72				sta $72
-.284d		a5 73		lda $73				lda $73
-.284f		69 00		adc #$00			adc #$00
-.2851		85 73		sta $73				sta $73
-.2853						VR1:
-.2853		a0 00		ldy #$00			ldy #$00
-.2855		b1 74		lda ($74),y			lda ($74),y
-.2857		c9 aa		cmp #$aa			cmp #SK
-.2859		f0 2c		beq $2887			beq done3
-.285b		c9 a8		cmp #$a8			cmp #RT
-.285d		f0 0e		beq $286d			beq rest3
-.285f		c9 ff		cmp #$ff			cmp #$ff
-.2861		d0 0f		bne $2872			bne nextR1Note
-.2863		a9 46		lda #$46			lda #<partC
-.2865		85 74		sta $74				sta $74
-.2867		a9 0f		lda #$0f			lda #>partC
-.2869		85 75		sta $75				sta $75
-.286b		80 e6		bra $2853			bra VR1
-.286d						rest3:
-.286d		9c 04 d5	stz $d504			stz SID_R1_GATE
-.2870		80 15		bra $2887			bra done3
-.2872						nextR1Note:
-.2872		aa		tax				tax
-.2873		9c 04 d5	stz $d504			stz SID_R1_GATE
-.2876		bd 88 08	lda $0888,x			lda freq,x
-.2879		8d 00 d5	sta $d500			sta SID_R1_FREQ_L
-.287c		bd 89 08	lda $0889,x			lda freq+1,x
-.287f		8d 01 d5	sta $d501			sta SID_R1_FREQ_H
-.2882		a9 11		lda #$11			lda #waveType
-.2884		8d 04 d5	sta $d504			sta SID_R1_GATE
-.2887						done3:
-.2887		18		clc				clc
-.2888		a5 74		lda $74				lda $74
-.288a		69 01		adc #$01			adc #$01
-.288c		85 74		sta $74				sta $74
-.288e		a5 75		lda $75				lda $75
-.2890		69 00		adc #$00			adc #$00
-.2892		85 75		sta $75				sta $75
-.2894						harmony:
-.2894						VR2:
-.2894		a0 00		ldy #$00			ldy #$00
-.2896		b1 76		lda ($76),y			lda ($76),y
-.2898		c9 aa		cmp #$aa			cmp #SK
-.289a		f0 2f		beq $28cb			beq done4
-.289c		c9 a8		cmp #$a8			cmp #RT
-.289e		f0 0e		beq $28ae			beq rest4
-.28a0		c9 ff		cmp #$ff			cmp #$ff
-.28a2		d0 0f		bne $28b3			bne nextR2Note
-.28a4		a9 4f		lda #$4f			lda #<partD
-.28a6		85 76		sta $76				sta $76
-.28a8		a9 12		lda #$12			lda #>partD
-.28aa		85 77		sta $77				sta $77
-.28ac		80 e6		bra $2894			bra VR2
-.28ae						rest4:
-.28ae		9c 0b d5	stz $d50b			stz SID_R2_GATE
-.28b1		80 18		bra $28cb			bra done4
-.28b3						nextR2Note:
-.28b3		38		sec				sec
-.28b4		e9 26		sbc #$26			sbc #38
-.28b6		aa		tax				tax
-.28b7		9c 0b d5	stz $d50b			stz SID_R2_GATE
-.28ba		bd 88 08	lda $0888,x			lda freq,x
-.28bd		8d 07 d5	sta $d507			sta SID_R2_FREQ_L
-.28c0		bd 89 08	lda $0889,x			lda freq+1,x
-.28c3		8d 08 d5	sta $d508			sta SID_R2_FREQ_H
-.28c6		a9 11		lda #$11			lda #waveType
-.28c8		8d 0b d5	sta $d50b			sta SID_R2_GATE
-.28cb						done4:
-.28cb		18		clc				clc
-.28cc		a5 76		lda $76				lda $76
-.28ce		69 01		adc #$01			adc #$01
-.28d0		85 76		sta $76				sta $76
-.28d2		a5 77		lda $77				lda $77
-.28d4		69 00		adc #$00			adc #$00
-.28d6		85 77		sta $77				sta $77
-.28d8		60		rts				rts
+.27c7						music:
+.27c7		ad eb 28	lda $28eb			lda musicOn
+.27ca		f0 0a		beq $27d6			beq noMusic
+.27cc		ee 30 09	inc $0930			inc mTimer							; increment the music timer
+.27cf		ad 30 09	lda $0930			lda mTimer							; load and compare with set time
+.27d2		c9 0a		cmp #$0a			cmp #$0A 							; to determine if we should play the next note
+.27d4		f0 01		beq $27d7			beq playNotes
+.27d6						noMusic:
+.27d6		60		rts				rts
+.27d7						playNotes:
+.27d7		9c 30 09	stz $0930			stz mTimer						; reset the timer
+.27da						nextNote:
+.27da						VL1:
+.27da		a0 00		ldy #$00			ldy #$00
+.27dc		b1 70		lda ($70),y			lda ($70),y
+.27de		c9 aa		cmp #$aa			cmp #SK
+.27e0		f0 34		beq $2816			beq done1
+.27e2		c9 a8		cmp #$a8			cmp #RT
+.27e4		f0 16		beq $27fc			beq rest1
+.27e6		c9 ff		cmp #$ff			cmp #$ff
+.27e8		d0 17		bne $2801			bne nextL1Note
+.27ea		a9 34		lda #$34			lda #<partA
+.27ec		85 70		sta $70				sta $70
+.27ee		a9 09		lda #$09			lda #>partA
+.27f0		85 71		sta $71				sta $71
+.27f2		ad ea 28	lda $28ea			lda gameOn
+.27f5		d0 e3		bne $27da			bne VL1
+.27f7		9c eb 28	stz $28eb			stz musicOn
+.27fa		80 de		bra $27da			bra VL1
+.27fc						rest1:
+.27fc		9c 04 d4	stz $d404			stz SID_L1_GATE
+.27ff		80 15		bra $2816			bra done1
+.2801						nextL1Note:
+.2801		aa		tax				tax								; transfer note to x for indexing
+.2802		9c 04 d4	stz $d404			stz SID_L1_GATE					; close gate
+.2805		bd 88 08	lda $0888,x			lda freq,x						; load the frequency lo from the table
+.2808		8d 00 d4	sta $d400			sta SID_L1_FREQ_L				; store in register
+.280b		bd 89 08	lda $0889,x			lda freq+1,x 					; load frequency hi from the table
+.280e		8d 01 d4	sta $d401			sta SID_L1_FREQ_H				; store in the register
+.2811		a9 11		lda #$11			lda #waveType
+.2813		8d 04 d4	sta $d404			sta SID_L1_GATE
+.2816						done1:
+.2816		18		clc				clc
+.2817		a5 70		lda $70				lda $70
+.2819		69 01		adc #$01			adc #$01
+.281b		85 70		sta $70				sta $70
+.281d		a5 71		lda $71				lda $71
+.281f		69 00		adc #$00			adc #$00
+.2821		85 71		sta $71				sta $71
+.2823						VL2:
+.2823		a0 00		ldy #$00			ldy #$00
+.2825		b1 72		lda ($72),y			lda ($72),y
+.2827		c9 aa		cmp #$aa			cmp #SK
+.2829		f0 2c		beq $2857			beq done2
+.282b		c9 a8		cmp #$a8			cmp #RT
+.282d		f0 0e		beq $283d			beq rest2
+.282f		c9 ff		cmp #$ff			cmp #$ff
+.2831		d0 0f		bne $2842			bne nextL2Note
+.2833		a9 3d		lda #$3d			lda #<partB
+.2835		85 72		sta $72				sta $72
+.2837		a9 0c		lda #$0c			lda #>partB
+.2839		85 73		sta $73				sta $73
+.283b		80 e6		bra $2823			bra VL2
+.283d						rest2:
+.283d		9c 0b d4	stz $d40b			stz SID_L2_GATE
+.2840		80 15		bra $2857			bra done2
+.2842						nextL2Note:
+.2842		aa		tax				tax
+.2843		9c 0b d4	stz $d40b			stz SID_L2_GATE
+.2846		bd 88 08	lda $0888,x			lda freq,x
+.2849		8d 07 d4	sta $d407			sta SID_L2_FREQ_L
+.284c		bd 89 08	lda $0889,x			lda freq+1,x
+.284f		8d 08 d4	sta $d408			sta SID_L2_FREQ_H
+.2852		a9 11		lda #$11			lda #waveType
+.2854		8d 0b d4	sta $d40b			sta SID_L2_GATE
+.2857						done2:
+.2857		18		clc				clc
+.2858		a5 72		lda $72				lda $72
+.285a		69 01		adc #$01			adc #$01
+.285c		85 72		sta $72				sta $72
+.285e		a5 73		lda $73				lda $73
+.2860		69 00		adc #$00			adc #$00
+.2862		85 73		sta $73				sta $73
+.2864						VR1:
+.2864		a0 00		ldy #$00			ldy #$00
+.2866		b1 74		lda ($74),y			lda ($74),y
+.2868		c9 aa		cmp #$aa			cmp #SK
+.286a		f0 2c		beq $2898			beq done3
+.286c		c9 a8		cmp #$a8			cmp #RT
+.286e		f0 0e		beq $287e			beq rest3
+.2870		c9 ff		cmp #$ff			cmp #$ff
+.2872		d0 0f		bne $2883			bne nextR1Note
+.2874		a9 46		lda #$46			lda #<partC
+.2876		85 74		sta $74				sta $74
+.2878		a9 0f		lda #$0f			lda #>partC
+.287a		85 75		sta $75				sta $75
+.287c		80 e6		bra $2864			bra VR1
+.287e						rest3:
+.287e		9c 04 d5	stz $d504			stz SID_R1_GATE
+.2881		80 15		bra $2898			bra done3
+.2883						nextR1Note:
+.2883		aa		tax				tax
+.2884		9c 04 d5	stz $d504			stz SID_R1_GATE
+.2887		bd 88 08	lda $0888,x			lda freq,x
+.288a		8d 00 d5	sta $d500			sta SID_R1_FREQ_L
+.288d		bd 89 08	lda $0889,x			lda freq+1,x
+.2890		8d 01 d5	sta $d501			sta SID_R1_FREQ_H
+.2893		a9 11		lda #$11			lda #waveType
+.2895		8d 04 d5	sta $d504			sta SID_R1_GATE
+.2898						done3:
+.2898		18		clc				clc
+.2899		a5 74		lda $74				lda $74
+.289b		69 01		adc #$01			adc #$01
+.289d		85 74		sta $74				sta $74
+.289f		a5 75		lda $75				lda $75
+.28a1		69 00		adc #$00			adc #$00
+.28a3		85 75		sta $75				sta $75
+.28a5						harmony:
+.28a5						VR2:
+.28a5		a0 00		ldy #$00			ldy #$00
+.28a7		b1 76		lda ($76),y			lda ($76),y
+.28a9		c9 aa		cmp #$aa			cmp #SK
+.28ab		f0 2f		beq $28dc			beq done4
+.28ad		c9 a8		cmp #$a8			cmp #RT
+.28af		f0 0e		beq $28bf			beq rest4
+.28b1		c9 ff		cmp #$ff			cmp #$ff
+.28b3		d0 0f		bne $28c4			bne nextR2Note
+.28b5		a9 4f		lda #$4f			lda #<partD
+.28b7		85 76		sta $76				sta $76
+.28b9		a9 12		lda #$12			lda #>partD
+.28bb		85 77		sta $77				sta $77
+.28bd		80 e6		bra $28a5			bra VR2
+.28bf						rest4:
+.28bf		9c 0b d5	stz $d50b			stz SID_R2_GATE
+.28c2		80 18		bra $28dc			bra done4
+.28c4						nextR2Note:
+.28c4		38		sec				sec
+.28c5		e9 26		sbc #$26			sbc #38
+.28c7		aa		tax				tax
+.28c8		9c 0b d5	stz $d50b			stz SID_R2_GATE
+.28cb		bd 88 08	lda $0888,x			lda freq,x
+.28ce		8d 07 d5	sta $d507			sta SID_R2_FREQ_L
+.28d1		bd 89 08	lda $0889,x			lda freq+1,x
+.28d4		8d 08 d5	sta $d508			sta SID_R2_FREQ_H
+.28d7		a9 11		lda #$11			lda #waveType
+.28d9		8d 0b d5	sta $d50b			sta SID_R2_GATE
+.28dc						done4:
+.28dc		18		clc				clc
+.28dd		a5 76		lda $76				lda $76
+.28df		69 01		adc #$01			adc #$01
+.28e1		85 76		sta $76				sta $76
+.28e3		a5 77		lda $77				lda $77
+.28e5		69 00		adc #$00			adc #$00
+.28e7		85 77		sta $77				sta $77
+.28e9		60		rts				rts
 
 ;******  Return to file: trickortreat.asm
 
->28d9		00				gameOn			.byte $00
->28da		00				musicOn			.byte $00
->28db		00 00				happyKids:		.word $0000
->28dd		00 00				score:			.word $0000
->28df		01				level:			.byte $01
->28e0		30 31 32 33 34 35 36 37		numbers:		.text "0123456789"
->28e8		38 39
->28ea		20 20 20 20 20 53 43 4f		textScore:		.text "     SCORE:"
->28f2		52 45 3a
->28f5		48 61 70 70 79 20 4b 69		textKids:		.text "Happy Kids:"
->28fd		64 73 3a
->2900		20 20 20 20 20 4c 65 76		textLevel:		.text "     Level:"
->2908		65 6c 3a
->290b		00 00				happyKidsHex:	.word $0000
->290d		00				levelUpFlag:	.byte $00
->290e		00				speed:			.byte $00
->290f		00				simpleCounter:	.byte $00
->2910		01 01 01 01 01 01 01 01		kids_Flag:		.byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
->2918		01 01 01 01 01 01 01 01 01 01 01 01
->2924		60 60 60 60 60 60 60 60		kids_XLO:		.byte $60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60
->292c		60 60 60 60 60 60 60 60 60 60 60 60
->2938		01 01 01 01 01 01 01 01		kids_XHI:		.byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
->2940		01 01 01 01 01 01 01 01 01 01 01 01
->294c		55 85 b5 e5 55 85 b5 e5		kids_YLO:		.byte $55,$85,$b5,$e5,$55,$85,$b5,$e5,$55,$85,$b5,$e5,$55,$85,$b5,$e5,$55,$85,$b5,$e5
->2954		55 85 b5 e5 55 85 b5 e5 55 85 b5 e5
->2960		00 00 00 00 00 00 00 00		kids_Treat:		.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
->2968		00 00 00 00 00 00 00 00 00 00 00 00
->2974		03 06 04 04 07 02 01 04		kids_Speed:		.byte $03,$06,$04,$04,$07,$02,$01,$04,$08,$01,$03,$02,$05,$09,$0a,$05,$02,$04,$08,$02
->297c		08 01 03 02 05 09 0a 05 02 04 08 02
->2988		00 00 00 00 00 00 00 00		kids_Count:		.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
->2990		00 00 00 00 00 00 00 00 00 00 00 00
->299c		00 04 08 0c 10 14 00 04		kids_SP:		.byte $00,$04,$08,$0c,$10,$14,$00,$04,$08,$0c,$10,$14,$00,$04,$08,$0c,$10,$14,$00,$04
->29a4		08 0c 10 14 00 04 08 0c 10 14 00 04
->29b0		00 00 00 00 00 00 00 00		kids_SP_Step:	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
->29b8		00 00 00 00 00 00 00 00 00 00 00 00
->29c4		00 08 10 18 20 28 30 38		kids_SP_Reg:	.byte $00,$08,$10,$18,$20,$28,$30,$38,$40,$48,$50,$58,$60,$68,$70,$78,$80,$88,$90,$98
->29cc		40 48 50 58 60 68 70 78 80 88 90 98
->29d8		00 00 00 04 00 08 00 04		charTable:	.word	sprite1,sprite2,sprite3,sprite2								;00		witch left
->29e0		00 20 00 24 00 28 00 24					.word	sprite9,sprite10,sprite11,sprite10							;04		reaper left
->29e8		00 40 00 44 00 48 00 44					.word	sprite17,sprite18,sprite19,sprite18							;08		dracula left
->29f0		00 60 00 64 00 68 00 64					.word	sprite25,sprite26,sprite27,sprite26							;0c		lady drac left
->29f8		00 80 00 84 00 88 00 84					.word	sprite33,sprite34,sprite35,sprite34							;10		ghost left
->2a00		00 a0 00 a4 00 a8 00 a4					.word	sprite41,sprite42,sprite43,sprite42							;14		jack left
->2a08		00 0c 00 10 00 14 00 10		charTable2:	.word	sprite4,sprite5,sprite6,sprite5								;00		witch right
->2a10		00 2c 00 30 00 34 00 30					.word	sprite12,sprite13,sprite14,sprite13							;04		reaper right
->2a18		00 4c 00 50 00 54 00 50					.word	sprite20,sprite21,sprite22,sprite21							;08		dracula right
->2a20		00 6c 00 70 00 74 00 70					.word	sprite28,sprite29,sprite30,sprite29							;0c		lady drac right
->2a28		00 8c 00 90 00 94 00 90					.word	sprite36,sprite37,sprite38,sprite37							;10		ghost right
->2a30		00 ac 00 b0 00 b4 00 b0					.word	sprite44,sprite45,sprite46,sprite45							;14		jack right
->2a38		00 00 00 00 00 00 00 00		candy_Flag:		.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
->2a40		00 00 00 00 00 00 00 00 00 00 00 00
->2a4c		38 38 38 38 38 38 38 38		candy_XLO:		.byte $38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38
->2a54		38 38 38 38 38 38 38 38 38 38 38 38
->2a60		00 00 00 00 00 00 00 00		candy_XHI:		.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
->2a68		00 00 00 00 00 00 00 00 00 00 00 00
->2a74		00 00 00 00 00 00 00 00		candy_YLO:		.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
->2a7c		00 00 00 00 00 00 00 00 00 00 00 00
->2a88		55 85 b5 e5 55 85 b5 e5		candy_Home:		.byte $55,$85,$b5,$e5,$55,$85,$b5,$e5,$55,$85,$b5,$e5,$55,$85,$b5,$e5,$55,$85,$b5,$e5
->2a90		55 85 b5 e5 55 85 b5 e5 55 85 b5 e5
->2a9c		00 08 10 18 20 28 30 38		candy_SP_Reg:	.byte $00,$08,$10,$18,$20,$28,$30,$38,$40,$48,$50,$58,$60,$68,$70,$78,$80,$88,$90,$98
->2aa4		40 48 50 58 60 68 70 78 80 88 90 98
-.2ab0						candyOrder:
->2ab0		08 7f 08 83 08 87 08 8b					.word candy1,candy2,candy3,candy4,candy5
->2ab8		08 8f
->2aba		08 83 08 8b 08 8f 08 87					.word candy2,candy4,candy5,candy3,candy1
->2ac2		08 7f
->2ac4		08 87 08 7f 08 83 08 8f					.word candy3,candy1,candy2,candy5,candy4
->2acc		08 8b
->2ace		08 8b 08 8f 08 7f 08 83					.word candy4,candy5,candy1,candy2,candy3
->2ad6		08 87
->2ad8		48				playerXLO:			.byte	$48
->2ad9		00				playerXHI:			.byte	$00
->2ada		55				playerYLO:			.byte	$55
->2adb		00				playerYHI:			.byte	$00
->2adc		00				playerPOS:			.byte 	$00
->2add		00				playerStep:			.byte 	$00
->2ade		15				playerCandy:		.byte 21
->2adf		55 85 b5 e5			playerPosTable:		.byte $55,$85,$b5,$e5
->2ae3		00				moving:				.byte $00
->2ae4		00				pDir				.byte $00
->2ae5		08 5f 08 63 08 67 08 63		playerTable1:	.word player1,player2,player3,player2
->2aed		08 6b 08 6f 08 73 08 6f		playerTable2:	.word player4,player5,player6,player5
->2af5		00				moonXLO:			.byte $00
->2af6		00				moonXHI:			.byte $00
->2af7		00				moonYLO:			.byte $00
->2af8		00				moonYHI:			.byte $00
->2af9		00				moonXCount:			.byte $00
->2afa		00				moonyCount:			.byte $00
->2afb		00				moonyCountHI:		.byte $00
->2afc		00				totalColors:	.byte $00
->2afd		00				joyX:			.byte $00
->2afe		00				joyY:			.byte $00
->2aff		00				joyB:			.byte $00
->2b00		00				joyHold:		.byte $00
->2b01		00 00 03 07 0b 0f		levelCandy:		.byte $00,$00,$03,$07,$0b,$0f
->2b07		00 04 03 02 01 00		levelSpeed:		.byte $00,$04,$03,$02,$01,$00
->2b0d		00 0a 14 28 3c ff		levelAdvance:	.byte $00,10,20,40,60,$ff
->2b13		00 01 02 04 0a 15		levelScoring:	.byte $00,$01,$02,$04,$0a,$15
+>28ea		00				gameOn			.byte $00
+>28eb		00				musicOn			.byte $00
+>28ec		00 00				happyKids:		.word $0000
+>28ee		00 00				score:			.word $0000
+>28f0		01				level:			.byte $01
+>28f1		30 31 32 33 34 35 36 37		numbers:		.text "0123456789"
+>28f9		38 39
+>28fb		20 20 20 20 20 53 43 4f		textScore:		.text "     SCORE:"
+>2903		52 45 3a
+>2906		48 61 70 70 79 20 4b 69		textKids:		.text "Happy Kids:"
+>290e		64 73 3a
+>2911		20 20 20 20 20 4c 65 76		textLevel:		.text "     Level:"
+>2919		65 6c 3a
+>291c		00 00				happyKidsHex:	.word $0000
+>291e		00				levelUpFlag:	.byte $00
+>291f		00				speed:			.byte $00
+>2920		00				simpleCounter:	.byte $00
+>2921		01 01 01 01 01 01 01 01		kids_Flag:		.byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
+>2929		01 01 01 01 01 01 01 01 01 01 01 01
+>2935		60 60 60 60 60 60 60 60		kids_XLO:		.byte $60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60,$60
+>293d		60 60 60 60 60 60 60 60 60 60 60 60
+>2949		01 01 01 01 01 01 01 01		kids_XHI:		.byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
+>2951		01 01 01 01 01 01 01 01 01 01 01 01
+>295d		55 85 b5 e5 55 85 b5 e5		kids_YLO:		.byte $55,$85,$b5,$e5,$55,$85,$b5,$e5,$55,$85,$b5,$e5,$55,$85,$b5,$e5,$55,$85,$b5,$e5
+>2965		55 85 b5 e5 55 85 b5 e5 55 85 b5 e5
+>2971		00 00 00 00 00 00 00 00		kids_Treat:		.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+>2979		00 00 00 00 00 00 00 00 00 00 00 00
+>2985		03 06 04 04 07 02 01 04		kids_Speed:		.byte $03,$06,$04,$04,$07,$02,$01,$04,$08,$01,$03,$02,$05,$09,$0a,$05,$02,$04,$08,$02
+>298d		08 01 03 02 05 09 0a 05 02 04 08 02
+>2999		00 00 00 00 00 00 00 00		kids_Count:		.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+>29a1		00 00 00 00 00 00 00 00 00 00 00 00
+>29ad		00 04 08 0c 10 14 00 04		kids_SP:		.byte $00,$04,$08,$0c,$10,$14,$00,$04,$08,$0c,$10,$14,$00,$04,$08,$0c,$10,$14,$00,$04
+>29b5		08 0c 10 14 00 04 08 0c 10 14 00 04
+>29c1		00 00 00 00 00 00 00 00		kids_SP_Step:	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+>29c9		00 00 00 00 00 00 00 00 00 00 00 00
+>29d5		00 08 10 18 20 28 30 38		kids_SP_Reg:	.byte $00,$08,$10,$18,$20,$28,$30,$38,$40,$48,$50,$58,$60,$68,$70,$78,$80,$88,$90,$98
+>29dd		40 48 50 58 60 68 70 78 80 88 90 98
+>29e9		00 00 00 04 00 08 00 04		charTable:	.word	sprite1,sprite2,sprite3,sprite2								;00		witch left
+>29f1		00 20 00 24 00 28 00 24					.word	sprite9,sprite10,sprite11,sprite10							;04		reaper left
+>29f9		00 40 00 44 00 48 00 44					.word	sprite17,sprite18,sprite19,sprite18							;08		dracula left
+>2a01		00 60 00 64 00 68 00 64					.word	sprite25,sprite26,sprite27,sprite26							;0c		lady drac left
+>2a09		00 80 00 84 00 88 00 84					.word	sprite33,sprite34,sprite35,sprite34							;10		ghost left
+>2a11		00 a0 00 a4 00 a8 00 a4					.word	sprite41,sprite42,sprite43,sprite42							;14		jack left
+>2a19		00 0c 00 10 00 14 00 10		charTable2:	.word	sprite4,sprite5,sprite6,sprite5								;00		witch right
+>2a21		00 2c 00 30 00 34 00 30					.word	sprite12,sprite13,sprite14,sprite13							;04		reaper right
+>2a29		00 4c 00 50 00 54 00 50					.word	sprite20,sprite21,sprite22,sprite21							;08		dracula right
+>2a31		00 6c 00 70 00 74 00 70					.word	sprite28,sprite29,sprite30,sprite29							;0c		lady drac right
+>2a39		00 8c 00 90 00 94 00 90					.word	sprite36,sprite37,sprite38,sprite37							;10		ghost right
+>2a41		00 ac 00 b0 00 b4 00 b0					.word	sprite44,sprite45,sprite46,sprite45							;14		jack right
+>2a49		00 00 00 00 00 00 00 00		candy_Flag:		.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+>2a51		00 00 00 00 00 00 00 00 00 00 00 00
+>2a5d		38 38 38 38 38 38 38 38		candy_XLO:		.byte $38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38
+>2a65		38 38 38 38 38 38 38 38 38 38 38 38
+>2a71		00 00 00 00 00 00 00 00		candy_XHI:		.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+>2a79		00 00 00 00 00 00 00 00 00 00 00 00
+>2a85		00 00 00 00 00 00 00 00		candy_YLO:		.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+>2a8d		00 00 00 00 00 00 00 00 00 00 00 00
+>2a99		55 85 b5 e5 55 85 b5 e5		candy_Home:		.byte $55,$85,$b5,$e5,$55,$85,$b5,$e5,$55,$85,$b5,$e5,$55,$85,$b5,$e5,$55,$85,$b5,$e5
+>2aa1		55 85 b5 e5 55 85 b5 e5 55 85 b5 e5
+>2aad		00 08 10 18 20 28 30 38		candy_SP_Reg:	.byte $00,$08,$10,$18,$20,$28,$30,$38,$40,$48,$50,$58,$60,$68,$70,$78,$80,$88,$90,$98
+>2ab5		40 48 50 58 60 68 70 78 80 88 90 98
+.2ac1						candyOrder:
+>2ac1		08 7f 08 83 08 87 08 8b					.word candy1,candy2,candy3,candy4,candy5
+>2ac9		08 8f
+>2acb		08 83 08 8b 08 8f 08 87					.word candy2,candy4,candy5,candy3,candy1
+>2ad3		08 7f
+>2ad5		08 87 08 7f 08 83 08 8f					.word candy3,candy1,candy2,candy5,candy4
+>2add		08 8b
+>2adf		08 8b 08 8f 08 7f 08 83					.word candy4,candy5,candy1,candy2,candy3
+>2ae7		08 87
+>2ae9		48				playerXLO:			.byte	$48
+>2aea		00				playerXHI:			.byte	$00
+>2aeb		55				playerYLO:			.byte	$55
+>2aec		00				playerYHI:			.byte	$00
+>2aed		00				playerPOS:			.byte 	$00
+>2aee		00				playerStep:			.byte 	$00
+>2aef		15				playerCandy:		.byte 21
+>2af0		55 85 b5 e5			playerPosTable:		.byte $55,$85,$b5,$e5
+>2af4		00				moving:				.byte $00
+>2af5		00				pDir				.byte $00
+>2af6		08 5f 08 63 08 67 08 63		playerTable1:	.word player1,player2,player3,player2
+>2afe		08 6b 08 6f 08 73 08 6f		playerTable2:	.word player4,player5,player6,player5
+>2b06		00				moonXLO:			.byte $00
+>2b07		00				moonXHI:			.byte $00
+>2b08		00				moonYLO:			.byte $00
+>2b09		00				moonYHI:			.byte $00
+>2b0a		00				moonXCount:			.byte $00
+>2b0b		00				moonyCount:			.byte $00
+>2b0c		00				moonyCountHI:		.byte $00
+>2b0d		00				totalColors:	.byte $00
+>2b0e		00				joyX:			.byte $00
+>2b0f		00				joyY:			.byte $00
+>2b10		00				joyB:			.byte $00
+>2b11		00				joyHold:		.byte $00
+>2b12		00 00 03 07 0b 0f		levelCandy:		.byte $00,$00,$03,$07,$0b,$0f
+>2b18		00 04 03 02 01 00		levelSpeed:		.byte $00,$04,$03,$02,$01,$00
+>2b1e		00 0a 14 28 3c ff		levelAdvance:	.byte $00,10,20,40,60,$ff
+>2b24		00 01 02 04 0a 15		levelScoring:	.byte $00,$01,$02,$04,$0a,$15
 .0500						font:
 >0500		00 00 00 00 00 00 00 00		.binary "fat_letters.bin"
 >0508		00 18 18 18 18 00 18 00 00 66 66 66 00 00 00 00
@@ -6297,7 +6306,7 @@
 ;******  Return to file: trickortreat.asm
 
 
-;******  Processing file: candy.s
+;******  Processing file: candy2.s
 
 .017f08	7f08					candy1:
 >017f08	7f08	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
@@ -6336,50 +6345,50 @@
 >018068	8068	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 >018070	8070	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 >018080	8080	00 00 00 00 00 00 00 00
->018088	8088	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018090	8090	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018088	8088	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018090	8090	00 00 00 00 00 01 01 01 01 01 01 00 00 00 00 00
 >0180a0	80a0	00 00 00 00 00 00 00 00
->0180a8	80a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0180b0	80b0	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>0180a8	80a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$1a,$1a,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0180b0	80b0	00 00 00 00 01 01 01 1a 1a 01 01 01 00 00 00 00
 >0180c0	80c0	00 00 00 00 00 00 00 00
->0180c8	80c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0180d0	80d0	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>0180c8	80c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$16,$1a,$15,$11,$1d,$15,$1a,$1a,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0180d0	80d0	00 00 00 01 16 1a 15 11 1d 15 1a 1a 01 00 00 00
 >0180e0	80e0	00 00 00 00 00 00 00 00
->0180e8	80e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$4,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0180f0	80f0	00 00 00 00 04 00 00 00 00 00 00 00 00 00 00 00
+>0180e8	80e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$14,$1a,$15,$1d,$15,$1a,$1a,$15,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0180f0	80f0	00 00 00 01 14 1a 15 1d 15 1a 1a 15 01 01 00 00
 >018100	8100	00 00 00 00 00 00 00 00
->018108	8108	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018110	8110	00 00 00 01 01 00 00 00 00 00 00 00 00 00 00 00
+>018108	8108	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$15,$1d,$15,$16,$15,$1d,$15,$1d,$1a,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018110	8110	00 00 01 01 15 1d 15 16 15 1d 15 1d 1a 01 00 00
 >018120	8120	00 00 00 00 00 00 00 00
->018128	8128	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$c,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018130	8130	00 00 01 01 0c 00 00 00 00 00 00 00 00 00 00 00
+>018128	8128	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$14,$11,$15,$15,$15,$15,$15,$15,$15,$15,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018130	8130	00 01 01 14 11 15 15 15 15 15 15 15 15 01 01 00
 >018140	8140	00 00 00 00 00 00 00 00
->018148	8148	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$4,$1,$1,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018150	8150	00 00 04 01 01 01 01 01 00 00 00 00 00 00 00 00
+>018148	8148	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$16,$14,$15,$1d,$15,$15,$15,$16,$1d,$15,$15,$15,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018150	8150	00 01 16 14 15 1d 15 15 15 16 1d 15 15 15 01 00
 >018160	8160	00 00 00 00 00 00 00 00
->018168	8168	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$c,$c,$c,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018170	8170	00 00 00 00 01 0c 0c 0c 01 00 00 00 00 00 00 00
+>018168	8168	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1a,$1d,$1d,$15,$1d,$1d,$15,$15,$15,$1d,$1a,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018170	8170	00 01 01 1a 1d 1d 15 1d 1d 15 15 15 1d 1a 01 00
 >018180	8180	00 00 00 00 00 00 00 00
->018188	8188	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$b,$b,$c,$c,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018190	8190	00 00 00 00 01 0b 0b 0c 0c 01 00 00 00 00 00 00
+>018188	8188	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$16,$14,$14,$16,$1d,$15,$15,$15,$1d,$15,$15,$14,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018190	8190	00 01 16 14 14 16 1d 15 15 15 1d 15 15 14 01 00
 >0181a0	81a0	00 00 00 00 00 00 00 00
->0181a8	81a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$b,$b,$b,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0181b0	81b0	00 00 00 00 00 01 15 0b 0b 0b 01 00 00 00 00 00
+>0181a8	81a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$2,$1a,$1d,$15,$15,$16,$15,$1d,$11,$11,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0181b0	81b0	00 01 01 02 1a 1d 15 15 16 15 1d 11 11 01 01 00
 >0181c0	81c0	00 00 00 00 00 00 00 00
->0181c8	81c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$15,$b,$b,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0181d0	81d0	00 00 00 00 00 01 01 15 0b 0b 01 00 00 00 00 00
+>0181c8	81c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$2,$14,$1d,$15,$1d,$15,$11,$15,$1a,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0181d0	81d0	00 00 01 01 02 14 1d 15 1d 15 11 15 1a 01 00 00
 >0181e0	81e0	00 00 00 00 00 00 00 00
->0181e8	81e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$15,$15,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0181f0	81f0	00 00 00 00 00 00 01 01 15 15 01 00 00 00 00 00
+>0181e8	81e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$2,$14,$1a,$1a,$14,$1a,$16,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0181f0	81f0	00 00 00 01 01 02 14 1a 1a 14 1a 16 01 00 00 00
 >018200	8200	00 00 00 00 00 00 00 00
->018208	8208	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018210	8210	00 00 00 00 00 00 00 00 01 01 01 01 01 00 00 00
+>018208	8208	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$16,$2,$2,$16,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018210	8210	00 00 00 00 01 01 16 02 02 16 01 01 01 00 00 00
 >018220	8220	00 00 00 00 00 00 00 00
->018228	8228	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018230	8230	00 00 00 00 00 00 00 00 00 00 01 01 00 00 00 00
+>018228	8228	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018230	8230	00 00 00 00 00 01 01 01 01 01 01 00 00 00 00 00
 >018240	8240	00 00 00 00 00 00 00 00
->018248	8248	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$4,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018250	8250	00 00 00 00 00 00 00 00 00 00 04 00 00 00 00 00
+>018248	8248	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018250	8250	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 >018260	8260	00 00 00 00 00 00 00 00
 >018268	8268	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 >018270	8270	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
@@ -6430,56 +6439,56 @@
 >018448	8448	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 >018450	8450	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 >018460	8460	00 00 00 00 00 00 00 00
->018468	8468	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018470	8470	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018468	8468	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018470	8470	00 00 00 01 01 01 00 00 00 00 00 00 00 00 00 00
 >018480	8480	00 00 00 00 00 00 00 00
->018488	8488	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018490	8490	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018488	8488	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$a,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018490	8490	00 00 01 01 0a 01 00 00 00 00 00 00 00 00 00 00
 >0184a0	84a0	00 00 00 00 00 00 00 00
->0184a8	84a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0184b0	84b0	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>0184a8	84a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$a,$b,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0184b0	84b0	00 01 01 0a 0b 01 00 00 00 00 00 00 00 00 00 00
 >0184c0	84c0	00 00 00 00 00 00 00 00
->0184c8	84c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$4,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0184d0	84d0	00 00 00 00 00 00 00 00 00 00 04 00 00 00 00 00
+>0184c8	84c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$a,$b,$b,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0184d0	84d0	01 01 0a 0b 0b 01 00 00 00 00 00 00 00 00 00 00
 >0184e0	84e0	00 00 00 00 00 00 00 00
->0184e8	84e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$4,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0184f0	84f0	00 00 00 00 00 00 00 00 00 00 04 01 00 00 00 00
+>0184e8	84e8	00 00 00 00 00 00 00 01			.byte	$0,$0,$0,$0,$0,$0,$0,$1,$1,$a,$b,$b,$b,$1,$1,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0184f0	84f0	01 0a 0b 0b 0b 01 01 01 01 01 00 00 00 00 00 00
 >018500	8500	00 00 00 00 00 00 00 00
->018508	8508	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018510	8510	00 00 00 00 00 00 00 00 00 00 01 01 01 00 00 00
+>018508	8508	00 00 00 00 00 00 00 01			.byte	$0,$0,$0,$0,$0,$0,$0,$1,$a,$b,$b,$10,$e,$1b,$1c,$1c,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018510	8510	0a 0b 0b 10 0e 1b 1c 1c 01 01 01 00 00 00 00 00
 >018520	8520	00 00 00 00 00 00 00 00
->018528	8528	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$1,$1,$4,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018530	8530	00 00 00 00 00 00 00 00 01 01 01 01 01 04 00 00
+>018528	8528	00 00 00 00 00 00 00 01			.byte	$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$1,$1,$1b,$1c,$8,$1c,$1b,$1b,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018530	8530	01 01 01 01 1b 1c 08 1c 1b 1b 01 01 00 00 00 00
 >018540	8540	00 00 00 00 00 00 00 00
->018548	8548	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$13,$12,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018550	8550	00 00 00 00 00 00 01 01 13 12 01 00 00 00 00 00
+>018548	8548	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$8,$1c,$1c,$1c,$1c,$8,$1b,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018550	8550	00 00 00 01 08 1c 1c 1c 1c 08 1b 01 00 00 00 00
 >018560	8560	00 00 00 00 00 00 00 00
->018568	8568	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$15,$13,$12,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018570	8570	00 00 00 00 00 01 01 15 13 12 01 00 00 00 00 00
+>018568	8568	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1b,$1c,$1c,$8,$1b,$1b,$1b,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018570	8570	00 00 00 01 1b 1c 1c 08 1b 1b 1b 01 00 00 00 00
 >018580	8580	00 00 00 00 00 00 00 00
->018588	8588	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$13,$12,$12,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018590	8590	00 00 00 00 00 01 15 13 12 12 01 00 00 00 00 00
+>018588	8588	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1b,$8,$1b,$1b,$1b,$1b,$1b,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018590	8590	00 00 00 01 1b 08 1b 1b 1b 1b 1b 01 00 00 00 00
 >0185a0	85a0	00 00 00 00 00 00 00 00
->0185a8	85a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$13,$13,$12,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0185b0	85b0	00 00 00 00 01 15 13 13 12 01 00 00 00 00 00 00
+>0185a8	85a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1b,$1b,$1b,$1b,$19,$2,$1,$1,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0
+>0185b0	85b0	00 00 00 01 01 1b 1b 1b 1b 19 02 01 01 01 01 01
 >0185c0	85c0	00 00 00 00 00 00 00 00
->0185c8	85c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$13,$13,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0185d0	85d0	00 00 00 00 01 15 13 13 01 00 00 00 00 00 00 00
+>0185c8	85c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1b,$19,$2,$2,$e,$b,$a,$b,$a,$1,$0,$0,$0,$0,$0,$0,$0,$0
+>0185d0	85d0	00 00 00 00 01 01 1b 19 02 02 0e 0b 0a 0b 0a 01
 >0185e0	85e0	00 00 00 00 00 00 00 00
->0185e8	85e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$4,$1,$1,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0185f0	85f0	00 00 04 01 01 01 01 01 00 00 00 00 00 00 00 00
+>0185e8	85e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$1,$1,$10,$b,$b,$b,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0
+>0185f0	85f0	00 00 00 00 00 01 01 01 01 01 10 0b 0b 0b 01 01
 >018600	8600	00 00 00 00 00 00 00 00
->018608	8608	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018610	8610	00 00 01 01 01 00 00 00 00 00 00 00 00 00 00 00
+>018608	8608	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$b,$10,$a,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018610	8610	00 00 00 00 00 00 00 00 00 01 0b 10 0a 01 01 00
 >018620	8620	00 00 00 00 00 00 00 00
->018628	8628	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018630	8630	00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00
+>018628	8628	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$10,$b,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018630	8630	00 00 00 00 00 00 00 00 00 01 10 0b 01 01 00 00
 >018640	8640	00 00 00 00 00 00 00 00
->018648	8648	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$4,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018650	8650	00 00 00 00 04 00 00 00 00 00 00 00 00 00 00 00
+>018648	8648	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$a,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018650	8650	00 00 00 00 00 00 00 00 00 01 0a 01 01 00 00 00
 >018660	8660	00 00 00 00 00 00 00 00
->018668	8668	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018670	8670	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018668	8668	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018670	8670	00 00 00 00 00 00 00 00 00 01 01 01 00 00 00 00
 >018680	8680	00 00 00 00 00 00 00 00
 >018688	8688	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 >018690	8690	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
@@ -6530,56 +6539,56 @@
 >018868	8868	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 >018870	8870	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 >018880	8880	00 00 00 00 00 00 00 00
->018888	8888	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018890	8890	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018888	8888	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018890	8890	00 00 00 00 00 00 00 00 00 00 01 01 01 00 00 00
 >0188a0	88a0	00 00 00 00 00 00 00 00
->0188a8	88a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0188b0	88b0	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>0188a8	88a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$13,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0188b0	88b0	00 00 00 00 00 00 00 00 00 00 01 13 01 01 00 00
 >0188c0	88c0	00 00 00 00 00 00 00 00
->0188c8	88c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0188d0	88d0	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>0188c8	88c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$b,$13,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0188d0	88d0	00 00 00 00 00 00 00 00 00 00 01 0b 13 01 01 00
 >0188e0	88e0	00 00 00 00 00 00 00 00
->0188e8	88e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0188f0	88f0	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>0188e8	88e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$13,$b,$13,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0
+>0188f0	88f0	00 00 00 00 00 00 00 00 00 00 01 13 0b 13 01 01
 >018900	8900	00 00 00 00 00 00 00 00
->018908	8908	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018910	8910	00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00
->018920	8920	00 00 00 00 00 00 00 00
->018928	8928	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$9,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018930	8930	00 00 00 01 09 00 00 00 00 00 00 00 00 00 00 00
->018940	8940	00 00 00 00 00 00 00 00
->018948	8948	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$4,$1,$1,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018950	8950	00 00 04 01 01 01 01 01 00 00 00 00 00 00 00 00
->018960	8960	00 00 00 00 00 00 00 00
->018968	8968	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$15,$15,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018970	8970	00 00 00 00 01 15 15 15 01 00 00 00 00 00 00 00
+>018908	8908	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$1,$1,$10,$b,$10,$13,$1,$1,$0,$0,$0,$0,$0,$0,$0
+>018910	8910	00 00 00 00 00 00 01 01 01 01 01 10 0b 10 13 01
+>018920	8920	01 00 00 00 00 00 00 00
+>018928	8928	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$5,$6,$1c,$1c,$10,$e,$10,$b,$b,$1,$0,$0,$0,$0,$0,$0,$0
+>018930	8930	00 00 00 00 00 01 01 05 06 1c 1c 10 0e 10 0b 0b
+>018940	8940	01 00 00 00 00 00 00 00
+>018948	8948	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$5,$5,$6,$6,$1c,$1b,$1,$1,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0
+>018950	8950	00 00 00 00 01 01 05 05 06 06 1c 1b 01 01 01 01
+>018960	8960	01 00 00 00 00 00 00 00
+>018968	8968	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$5,$6,$7,$5,$7,$1c,$4,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018970	8970	00 00 00 00 01 05 06 07 05 07 1c 04 01 00 00 00
 >018980	8980	00 00 00 00 00 00 00 00
->018988	8988	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$8,$8,$15,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018990	8990	00 00 00 00 00 01 08 08 15 01 00 00 00 00 00 00
+>018988	8988	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$6,$6,$6,$1c,$1c,$1b,$1b,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018990	8990	00 00 00 00 01 06 06 06 1c 1c 1b 1b 01 00 00 00
 >0189a0	89a0	00 00 00 00 00 00 00 00
->0189a8	89a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$8,$8,$8,$8,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0189b0	89b0	00 00 00 00 00 01 08 08 08 08 01 00 00 00 00 00
+>0189a8	89a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1b,$1c,$1c,$6,$1b,$1f,$2,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0189b0	89b0	00 00 00 00 01 1b 1c 1c 06 1b 1f 02 01 00 00 00
 >0189c0	89c0	00 00 00 00 00 00 00 00
->0189c8	89c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$9,$8,$8,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0189d0	89d0	00 00 00 00 00 00 01 09 08 08 01 00 00 00 00 00
+>0189c8	89c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$1,$1,$1b,$5,$1b,$1b,$2,$2,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0189d0	89d0	01 01 01 01 01 1b 05 1b 1b 02 02 01 01 00 00 00
 >0189e0	89e0	00 00 00 00 00 00 00 00
->0189e8	89e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$9,$9,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0189f0	89f0	00 00 00 00 00 00 00 01 09 09 01 00 00 00 00 00
+>0189e8	89e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$1,$13,$b,$13,$e,$e,$2,$2,$d,$2,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0189f0	89f0	01 13 0b 13 0e 0e 02 02 0d 02 01 01 00 00 00 00
 >018a00	8a00	00 00 00 00 00 00 00 00
->018a08	8a08	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$9,$1,$4,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018a10	8a10	00 00 00 00 00 00 00 00 01 01 01 09 01 04 00 00
+>018a08	8a08	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$13,$b,$b,$e,$1,$1,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018a10	8a10	01 01 13 0b 0b 0e 01 01 01 01 01 00 00 00 00 00
 >018a20	8a20	00 00 00 00 00 00 00 00
->018a28	8a28	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018a30	8a30	00 00 00 00 00 00 00 00 00 00 01 01 01 00 00 00
+>018a28	8a28	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$13,$10,$b,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018a30	8a30	00 01 01 13 10 0b 01 00 00 00 00 00 00 00 00 00
 >018a40	8a40	00 00 00 00 00 00 00 00
->018a48	8a48	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$4,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018a50	8a50	00 00 00 00 00 00 00 00 00 00 04 01 00 00 00 00
+>018a48	8a48	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$b,$10,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018a50	8a50	00 00 01 01 0b 10 01 00 00 00 00 00 00 00 00 00
 >018a60	8a60	00 00 00 00 00 00 00 00
->018a68	8a68	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018a70	8a70	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018a68	8a68	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$b,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018a70	8a70	00 00 00 01 01 0b 01 00 00 00 00 00 00 00 00 00
 >018a80	8a80	00 00 00 00 00 00 00 00
->018a88	8a88	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018a90	8a90	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018a88	8a88	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018a90	8a90	00 00 00 00 01 01 01 00 00 00 00 00 00 00 00 00
 >018aa0	8aa0	00 00 00 00 00 00 00 00
 >018aa8	8aa8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 >018ab0	8ab0	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
@@ -6618,62 +6627,62 @@
 >018c08	8c08	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 >018c10	8c10	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 >018c20	8c20	00 00 00 00 00 00 00 00
->018c28	8c28	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018c30	8c30	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018c28	8c28	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0
+>018c30	8c30	00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 01
 >018c40	8c40	00 00 00 00 00 00 00 00
->018c48	8c48	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018c50	8c50	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->018c60	8c60	00 00 00 00 00 00 00 00
->018c68	8c68	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018c70	8c70	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->018c80	8c80	00 00 00 00 00 00 00 00
->018c88	8c88	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018c90	8c90	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->018ca0	8ca0	00 00 00 00 00 00 00 00
->018ca8	8ca8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018cb0	8cb0	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->018cc0	8cc0	00 00 00 00 00 00 00 00
->018cc8	8cc8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018cd0	8cd0	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018c48	8c48	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$1,$1,$0,$0,$0,$0,$0,$0,$0
+>018c50	8c50	00 00 00 00 00 00 00 00 00 00 00 00 00 01 15 01
+>018c60	8c60	01 00 00 00 00 00 00 00
+>018c68	8c68	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1d,$1b,$1,$1,$0,$0,$0,$0,$0,$0
+>018c70	8c70	00 00 00 00 00 00 00 00 00 00 00 00 01 01 1d 1b
+>018c80	8c80	01 01 00 00 00 00 00 00
+>018c88	8c88	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$8,$1,$19,$1b,$1e,$1,$0,$0,$0,$0,$0,$0
+>018c90	8c90	00 00 00 00 00 00 00 00 00 00 00 01 08 01 19 1b
+>018ca0	8ca0	1e 01 00 00 00 00 00 00
+>018ca8	8ca8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$14,$7,$1,$1,$1,$1,$1,$0,$0,$0,$0,$0,$0
+>018cb0	8cb0	00 00 00 00 00 00 00 00 00 00 01 14 07 01 01 01
+>018cc0	8cc0	01 01 00 00 00 00 00 00
+>018cc8	8cc8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$7,$16,$1e,$1f,$1,$0,$0,$0,$0,$0,$0,$0,$0
+>018cd0	8cd0	00 00 00 00 00 00 00 00 00 01 15 07 16 1e 1f 01
 >018ce0	8ce0	00 00 00 00 00 00 00 00
->018ce8	8ce8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018cf0	8cf0	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018ce8	8ce8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$8,$15,$a,$16,$18,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018cf0	8cf0	00 00 00 00 00 00 00 00 01 08 15 0a 16 18 01 00
 >018d00	8d00	00 00 00 00 00 00 00 00
->018d08	8d08	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018d10	8d10	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018d08	8d08	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$7,$7,$6,$1e,$17,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018d10	8d10	00 00 00 00 00 00 00 01 07 07 06 1e 17 01 00 00
 >018d20	8d20	00 00 00 00 00 00 00 00
->018d28	8d28	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018d30	8d30	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018d28	8d28	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$14,$7,$6,$6,$1f,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018d30	8d30	00 00 00 00 00 00 01 14 07 06 06 1f 01 00 00 00
 >018d40	8d40	00 00 00 00 00 00 00 00
->018d48	8d48	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018d50	8d50	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018d48	8d48	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$7,$14,$1d,$6,$1d,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018d50	8d50	00 00 00 00 00 01 07 14 1d 06 1d 01 00 00 00 00
 >018d60	8d60	00 00 00 00 00 00 00 00
->018d68	8d68	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$4,$0,$0,$0,$1,$1,$1,$1,$1,$0,$0,$0,$4,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018d70	8d70	00 00 04 00 00 00 01 01 01 01 01 00 00 00 04 00
+>018d68	8d68	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$6,$7,$6,$17,$18,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018d70	8d70	00 00 00 00 01 06 07 06 17 18 01 00 00 00 00 00
 >018d80	8d80	00 00 00 00 00 00 00 00
->018d88	8d88	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$0,$1,$15,$15,$15,$15,$1c,$1,$0,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018d90	8d90	00 00 01 01 00 01 15 15 15 15 1c 01 00 01 01 00
+>018d88	8d88	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$6,$6,$6,$6,$18,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018d90	8d90	00 00 00 01 06 06 06 06 18 01 00 00 00 00 00 00
 >018da0	8da0	00 00 00 00 00 00 00 00
->018da8	8da8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1b,$1,$15,$1c,$1c,$1c,$1c,$1c,$1b,$1,$1b,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018db0	8db0	00 00 01 1b 01 15 1c 1c 1c 1c 1c 1b 01 1b 01 00
+>018da8	8da8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$7,$8,$a,$1c,$4,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018db0	8db0	00 00 01 07 08 0a 1c 04 01 00 00 00 00 00 00 00
 >018dc0	8dc0	00 00 00 00 00 00 00 00
->018dc8	8dc8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$0,$1,$1c,$1c,$1b,$1b,$1b,$1,$0,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018dd0	8dd0	00 00 01 01 00 01 1c 1c 1b 1b 1b 01 00 01 01 00
+>018dc8	8dc8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$7,$7,$a,$a,$1a,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018dd0	8dd0	00 01 07 07 0a 0a 1a 01 00 00 00 00 00 00 00 00
 >018de0	8de0	00 00 00 00 00 00 00 00
->018de8	8de8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$4,$0,$0,$0,$1,$1,$1,$1,$1,$0,$0,$0,$4,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018df0	8df0	00 00 04 00 00 00 01 01 01 01 01 00 00 00 04 00
+>018de8	8de8	00 00 00 00 00 00 00 01			.byte	$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$1,$1,$1e,$1f,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018df0	8df0	01 01 01 01 1e 1f 01 00 00 00 00 00 00 00 00 00
 >018e00	8e00	00 00 00 00 00 00 00 00
->018e08	8e08	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018e10	8e10	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018e08	8e08	00 00 00 00 00 00 00 01			.byte	$0,$0,$0,$0,$0,$0,$0,$1,$15,$1d,$19,$1,$1f,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018e10	8e10	15 1d 19 01 1f 01 00 00 00 00 00 00 00 00 00 00
 >018e20	8e20	00 00 00 00 00 00 00 00
->018e28	8e28	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018e30	8e30	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018e28	8e28	00 00 00 00 00 00 00 01			.byte	$0,$0,$0,$0,$0,$0,$0,$1,$1,$15,$1e,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018e30	8e30	01 15 1e 01 01 00 00 00 00 00 00 00 00 00 00 00
 >018e40	8e40	00 00 00 00 00 00 00 00
->018e48	8e48	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018e50	8e50	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018e48	8e48	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1e,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018e50	8e50	01 01 1e 01 00 00 00 00 00 00 00 00 00 00 00 00
 >018e60	8e60	00 00 00 00 00 00 00 00
->018e68	8e68	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->018e70	8e70	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>018e68	8e68	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>018e70	8e70	00 01 01 01 00 00 00 00 00 00 00 00 00 00 00 00
 >018e80	8e80	00 00 00 00 00 00 00 00
 >018e88	8e88	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 >018e90	8e90	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
@@ -6727,50 +6736,50 @@
 >019088	9088	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 >019090	9090	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 >0190a0	90a0	00 00 00 00 00 00 00 00
->0190a8	90a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0190b0	90b0	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>0190a8	90a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0190b0	90b0	00 00 01 01 01 01 00 00 00 00 00 00 00 00 00 00
 >0190c0	90c0	00 00 00 00 00 00 00 00
->0190c8	90c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0190d0	90d0	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>0190c8	90c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$15,$15,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0190d0	90d0	00 01 01 15 15 01 01 01 00 00 00 00 00 00 00 00
 >0190e0	90e0	00 00 00 00 00 00 00 00
->0190e8	90e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$4,$1,$1,$1,$4,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0190f0	90f0	00 00 00 00 00 00 04 01 01 01 04 00 00 00 00 00
+>0190e8	90e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$15,$15,$15,$15,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>0190f0	90f0	00 01 15 15 15 15 15 01 01 01 00 00 00 00 00 00
 >019100	9100	00 00 00 00 00 00 00 00
->019108	9108	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$10,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->019110	9110	00 00 00 00 00 00 00 01 10 01 00 00 00 00 00 00
+>019108	9108	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$15,$15,$15,$15,$15,$1c,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>019110	9110	00 01 15 15 15 15 15 15 1c 01 01 01 00 00 00 00
 >019120	9120	00 00 00 00 00 00 00 00
->019128	9128	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->019130	9130	00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00
+>019128	9128	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$15,$15,$15,$15,$5,$5,$1c,$1c,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>019130	9130	00 01 01 15 15 15 15 05 05 1c 1c 01 01 00 00 00
 >019140	9140	00 00 00 00 00 00 00 00
->019148	9148	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$10,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->019150	9150	00 00 00 00 00 00 00 01 10 01 00 00 00 00 00 00
+>019148	9148	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$15,$15,$5,$5,$5,$1c,$1c,$1c,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>019150	9150	00 00 01 15 15 15 05 05 05 1c 1c 1c 01 01 00 00
 >019160	9160	00 00 00 00 00 00 00 00
->019168	9168	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$f,$f,$10,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->019170	9170	00 00 00 00 00 00 01 0f 0f 10 01 00 00 00 00 00
+>019168	9168	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$15,$5,$5,$5,$5,$5,$1c,$1c,$6,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>019170	9170	00 00 01 01 15 05 05 05 05 05 1c 1c 06 01 01 00
 >019180	9180	00 00 00 00 00 00 00 00
->019188	9188	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$f,$10,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->019190	9190	00 00 00 00 00 00 01 15 0f 10 01 00 00 00 00 00
+>019188	9188	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$5,$5,$5,$5,$5,$5,$1c,$6,$6,$5,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0
+>019190	9190	00 00 00 01 05 05 05 05 05 05 1c 06 06 05 01 01
 >0191a0	91a0	00 00 00 00 00 00 00 00
->0191a8	91a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$f,$10,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0191b0	91b0	00 00 00 00 00 00 01 15 0f 10 01 00 00 00 00 00
+>0191a8	91a8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$5,$5,$5,$5,$5,$6,$6,$6,$5,$1f,$1,$0,$0,$0,$0,$0,$0,$0,$0
+>0191b0	91b0	00 00 00 01 01 05 05 05 05 05 06 06 06 05 1f 01
 >0191c0	91c0	00 00 00 00 00 00 00 00
->0191c8	91c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$f,$f,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0191d0	91d0	00 00 00 00 00 00 01 15 0f 0f 01 00 00 00 00 00
+>0191c8	91c8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1c,$5,$5,$5,$6,$6,$6,$1e,$5,$1f,$1,$0,$0,$0,$0,$0,$0,$0,$0
+>0191d0	91d0	00 00 00 00 01 1c 05 05 05 06 06 06 1e 05 1f 01
 >0191e0	91e0	00 00 00 00 00 00 00 00
->0191e8	91e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$f,$f,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->0191f0	91f0	00 00 00 00 00 00 01 15 0f 0f 01 00 00 00 00 00
+>0191e8	91e8	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1c,$5,$6,$6,$6,$1e,$5,$1f,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0
+>0191f0	91f0	00 00 00 00 01 01 1c 05 06 06 06 1e 05 1f 01 01
 >019200	9200	00 00 00 00 00 00 00 00
->019208	9208	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$15,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->019210	9210	00 00 00 00 00 00 00 01 15 01 00 00 00 00 00 00
+>019208	9208	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$5,$6,$6,$1e,$5,$5,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>019210	9210	00 00 00 00 00 01 01 05 06 06 1e 05 05 01 01 00
 >019220	9220	00 00 00 00 00 00 00 00
->019228	9228	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->019230	9230	00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00
+>019228	9228	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$5,$1e,$5,$1f,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>019230	9230	00 00 00 00 00 00 01 01 05 1e 05 1f 01 01 00 00
 >019240	9240	00 00 00 00 00 00 00 00
->019248	9248	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$10,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->019250	9250	00 00 00 00 00 00 00 01 10 01 00 00 00 00 00 00
+>019248	9248	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$5,$1f,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>019250	9250	00 00 00 00 00 00 00 01 01 05 1f 01 01 00 00 00
 >019260	9260	00 00 00 00 00 00 00 00
->019268	9268	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$4,$1,$1,$1,$4,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
->019270	9270	00 00 00 00 00 00 04 01 01 01 04 00 00 00 00 00
+>019268	9268	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$1,$1,$1,$1,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
+>019270	9270	00 00 00 00 00 00 00 00 01 01 01 01 00 00 00 00
 >019280	9280	00 00 00 00 00 00 00 00
 >019288	9288	00 00 00 00 00 00 00 00			.byte	$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0,$0
 >019290	9290	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
