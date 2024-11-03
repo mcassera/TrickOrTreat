@@ -480,12 +480,44 @@ dispatch:
 		beq UpdateScreen					; run the screen update
 		cmp #kernel.event.JOYSTICK			; is the event a Joystick Change?
 		beq setJoyStick
+        cmp #kernel.event.key.PRESSED		                     
+        beq keypress	
+		cmp #kernel.event.key.RELEASED
+		beq keyRelease
 		rts
+
+
+keypress:
+        lda event.key.flags                                             ; Once a key is pressed, we can get the ascii value by loading the byte from the
+        lda event.key.ascii                                             ; event.key.ascii location assigned by the kernel. We then check to see if it's a
+
+		cmp #16
+		bne checkD 
+		lda #$01
+		bra keyJmp
+checkD:
+		cmp #14
+		bne checkSpc
+		lda #$02
+		bra keyJmp
+checkSpc:
+		cmp #32
+		bne keyDone
+		lda #$10
+		bra keyJmp
+keyDone:
+		rts
+
+keyRelease:
+		lda #$00
+		bra keyJmp
+
 
 ; ************************************************************************************************************************************
 ;Read the joystick on event and set a direction to be used during the SOF cycle
 setJoyStick:
 		lda event.joystick.joy1
+keyJmp:
 		sta $d8								; Temp save joystick state
 		stz joyX							; reset all directions and button to zero
 		stz joyY
