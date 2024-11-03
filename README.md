@@ -1,7 +1,7 @@
 # TrickOrTreat
 A game for the Foenix Game Jam Oct 2024. Get snacks to all the trick or treaters
 
-Atari style joystick in port 2.
+Atari style joystick in port 2 or keyboard control using the UP/DOWN cursor keys and the space bar.
 
 Your neighbors have gone out to a halloween party. You're not much of a party goer yourself, so you offer to stay home and give out candy to all the kids for your three neighbors as well as your house.
 
