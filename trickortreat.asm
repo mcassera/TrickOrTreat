@@ -1348,7 +1348,8 @@ font:
 
 
 title:
-.include "Title_tileset.s"
+;.include "Title_tileset.s"
+.include "Title_tileset_new.s"
 trees:
 .include "Trees_tileset.s"
 background:
@@ -1356,15 +1357,18 @@ background:
 
 title_map:
 ;.binary "tt0.tlm"							; for emulator
-.binary "tt0h.tlm"							; for hardware
+;.binary "tt0h.tlm"							; for hardware
+.binary "tt0_new.tlm"						; for emulator
+;.binary "tt0h_new.tlm"						; for hardware
+
 
 trees_map:
-;.binary "tt1.tlm"							; for emulator
-.binary "tt1h.tlm"							; for hardware
+.binary "tt1.tlm"							; for emulator
+;.binary "tt1h.tlm"							; for hardware
 
 background_map:
-;.binary "tt2.tlm"							; for emulator
-.binary "tt2h.tlm"							; for hardware
+.binary "tt2.tlm"							; for emulator
+;.binary "tt2h.tlm"							; for hardware
 
 .include "player.s"
 .include "candy2.s"
