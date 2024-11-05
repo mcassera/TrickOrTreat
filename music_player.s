@@ -10,7 +10,7 @@ music:
 		beq noMusic
 		inc mTimer							; increment the music timer
 		lda mTimer							; load and compare with set time
-		cmp #$0A 							; to determine if we should play the next note
+		cmp mspeed 							; to determine if we should play the next note
 		beq playNotes						
 noMusic:
 		rts

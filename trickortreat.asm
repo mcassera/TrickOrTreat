@@ -297,12 +297,12 @@ systemStart:
 		lda #$0f							; set the SID volume to 15
 		sta SID_L_VOL
 		sta SID_R_VOL
-		lda #$37 
+		lda #$39 
 		sta SID_L1_ATDL
 		sta SID_R1_ATDL
 		sta SID_L2_ATDL
 		sta SID_R2_ATDL
-		lda #$52
+		lda #$09
 		sta SID_R1_STRL
 		sta SID_L1_STRL
 		sta SID_R2_STRL
@@ -397,6 +397,8 @@ candyDone:
 		stz happyKidsHex+1
 		lda #$04
 		sta speed
+		lda #$09
+		sta mspeed
 
 		ldx #$00
 ; ************************************************************************************************************************************
@@ -552,7 +554,7 @@ UpdateScreen:
 		jsr SetTimer						; Reset the next timer for SOF
 		jsr music
 		jsr checkJoy
-		jsr moonrise
+		jsr moonrise	
 		inc simpleCounter
 
 		lda gameOn
@@ -1136,6 +1138,8 @@ adjustSpeed:
 		ldx level
 		lda levelSpeed,x 
 		sta speed
+		lda levelMSpeed,X
+		sta mspeed
 
 
 
@@ -1250,6 +1254,7 @@ textLevel:		.text "     Level:"
 happyKidsHex:	.word $0000
 levelUpFlag:	.byte $00
 speed:			.byte $00
+mspeed:			.byte $00
 simpleCounter:	.byte $00
 
 kids_Flag:		.byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
@@ -1321,10 +1326,11 @@ joyY:			.byte $00
 joyB:			.byte $00
 joyHold:		.byte $00
 
-levelCandy:		.byte $00,$00,$03,$07,$0b,$0f
+levelCandy:		.byte $00,$00,$03,$07,$0b,$0b
 levelSpeed:		.byte $00,$04,$03,$02,$01,$00
-levelAdvance:	.byte $00,10,20,40,60,$ff
+levelAdvance:	.byte $00,20,40,60,100,$ff
 levelScoring:	.byte $00,$01,$02,$04,$0a,$15
+levelMSpeed:	.byte $00,$09,$09,$08,$08,$07
 
 
 
@@ -1358,17 +1364,17 @@ background:
 title_map:
 ;.binary "tt0.tlm"							; for emulator
 ;.binary "tt0h.tlm"							; for hardware
-.binary "tt0_new.tlm"						; for emulator
-;.binary "tt0h_new.tlm"						; for hardware
+;.binary "tt0_new.tlm"						; for emulator
+.binary "tt0h_new.tlm"						; for hardware
 
 
 trees_map:
-.binary "tt1.tlm"							; for emulator
-;.binary "tt1h.tlm"							; for hardware
+;.binary "tt1.tlm"							; for emulator
+.binary "tt1h.tlm"							; for hardware
 
 background_map:
-.binary "tt2.tlm"							; for emulator
-;.binary "tt2h.tlm"							; for hardware
+;.binary "tt2.tlm"							; for emulator
+.binary "tt2h.tlm"							; for hardware
 
 .include "player.s"
 .include "candy2.s"
